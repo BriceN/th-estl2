@@ -1,86 +1,169 @@
 <div class="carte-container">
+    <div class="holo-panel">
+        <!-- Decorative Elements -->
+        <div class="panel-decoration">
+            <div class="circuit-line top-left"></div>
+            <div class="circuit-line top-right"></div>
+            <div class="circuit-line bottom-left"></div>
+            <div class="circuit-line bottom-right"></div>
+            <div class="corner-accent top-left"></div>
+            <div class="corner-accent top-right"></div>
+            <div class="corner-accent bottom-left"></div>
+            <div class="corner-accent bottom-right"></div>
+        </div>
 
-    <!-- Indicateur d'étapes -->
-    <div class="step-indicator">
-        <div class="line"></div>
-        <div class="dots">
-            <div *ngFor="let step of steps; let i = index"
-                 class="step-dot"
-                 [class.completed]="step.isUnlocked"
-                 [class.current]="step.isCurrent"
-                 [class.locked]="!step.isAccessible">
+        <!-- Header -->
+        <div class="holo-header">
+            <div class="header-text">Carte Temporelle</div>
+            <div class="header-decoration"></div>
+        </div>
+
+        <!-- Indicateur d'étapes Amélioré -->
+        <div class="step-indicator">
+            <div class="indicator-frame">
+                <div class="line-container">
+                    <div class="line"></div>
+                    <div class="line-pulse"></div>
+                </div>
+                <div class="dots">
+                    <div *ngFor="let step of steps; let i = index"
+                         class="step-dot"
+                         [class.completed]="step.isUnlocked"
+                         [class.current]="step.isCurrent"
+                         [class.locked]="!step.isAccessible">
+                        <div class="dot-inner"></div>
+                        <div class="dot-glow"></div>
+                        <div class="dot-pulse"
+                             *ngIf="step.isCurrent"></div>
+                        <div class="step-number">{{ i + 1 }}</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Liste des étapes -->
-    <div class="timeline">
-        <div *ngFor="let step of steps; let i = index"
-             class="timeline-item"
-             [class.unlocked]="step.isUnlocked"
-             [class.current]="step.isCurrent"
-             [class.locked]="!step.isAccessible">
+        <!-- Liste des étapes -->
+        <div class="timeline">
+            <div *ngFor="let step of steps; let i = index"
+                 class="timeline-item"
+                 [class.unlocked]="step.isUnlocked"
+                 [class.current]="step.isCurrent"
+                 [class.locked]="!step.isAccessible">
 
-            <div class="timeline-header"
-                 (click)="step.isAccessible && toggleStep(step)">
-                <div class="status-icon">
-                    <span *ngIf="step.isUnlocked">✓</span>
-                    <span *ngIf="step.isCurrent && !step.isUnlocked">▶</span>
-                    <span *ngIf="!step.isCurrent && !step.isUnlocked && step.isAccessible">🔓</span>
-                    <span *ngIf="!step.isAccessible">🔒</span>
-                </div>
-                <h3 class="timeline-title">{{ step.isAccessible ? step.title : "???" }}</h3>
-
-                <!-- Caret icon indicator -->
-                <div class="caret-icon"
-                     *ngIf="step.isAccessible">
-                    <span [class.open]="step.isCurrent">&#9654;</span>
-                </div>
-            </div>
-
-            <div class="timeline-content"
-                 [class.hidden]="!step.isCurrent">
-                <!-- Contenu verrouillé -->
-                <div *ngIf="!step.isUnlocked">
-                    <div class="hint">{{ step.hint }}</div>
-
-                    <div class="media-container"
-                         *ngIf="step.lockedImage">
-                        <img [src]="step.lockedImage"
-                             alt="Image d'indice">
+                <div class="timeline-header"
+                     (click)="step.isAccessible && toggleStep(step)">
+                    <div class="status-icon">
+                        <div class="icon-frame">
+                            <span *ngIf="step.isUnlocked"
+                                  class="icon-complete">✓</span>
+                            <span *ngIf="step.isCurrent && !step.isUnlocked"
+                                  class="icon-current">▶</span>
+                            <span *ngIf="!step.isCurrent && !step.isUnlocked && step.isAccessible"
+                                  class="icon-accessible">🔓</span>
+                            <span *ngIf="!step.isAccessible"
+                                  class="icon-locked">🔒</span>
+                        </div>
                     </div>
+                    <h3 class="timeline-title">{{ step.isAccessible ? step.title : "???" }}</h3>
+                    <div class="step-id"
+                         *ngIf="step.isAccessible">{{ step.id }}</div>
 
-                    <div class="media-container"
-                         *ngIf="step.lockedVideo">
-                        <video [src]="step.lockedVideo"
-                               controls></video>
+                    <!-- Caret icon indicator -->
+                    <div class="caret-icon"
+                         *ngIf="step.isAccessible">
+                        <span [class.open]="step.isCurrent">&#9654;</span>
                     </div>
                 </div>
 
-                <!-- Contenu déverrouillé -->
-                <div *ngIf="step.isUnlocked"
-                     class="unlocked-content">
-                    <p>{{ step.unlockedContent }}</p>
+                <div class="timeline-content"
+                     [class.hidden]="!step.isCurrent">
 
-                    <div class="media-container"
-                         *ngIf="step.unlockedImage">
-                        <img [src]="step.unlockedImage"
-                             alt="Image du contenu débloqué">
-                    </div>
+                    <!-- Conteneur amélioré -->
+                    <div class="content-panel">
+                        <!-- Contenu verrouillé -->
+                        <div *ngIf="!step.isUnlocked"
+                             class="locked-content">
+                            <div class="hint">
+                                <div class="hint-header">
+                                    <div class="hint-icon">💡</div>
+                                    <div class="hint-title">Indice</div>
+                                </div>
+                                <div class="hint-body">{{ step.hint }}</div>
+                            </div>
 
-                    <div class="media-container"
-                         *ngIf="step.unlockedVideo">
-                        <video [src]="step.unlockedVideo"
-                               controls></video>
-                    </div>
+                            <div class="media-container hologram"
+                                 *ngIf="step.lockedImage">
+                                <div class="hologram-frame">
+                                    <div class="hologram-scan-line"></div>
+                                    <img [src]="step.lockedImage"
+                                         alt="Image d'indice">
+                                    <div class="hologram-glow"></div>
+                                </div>
+                            </div>
 
-                    <!-- Bouton d'étape suivante -->
-                    <div class="next-step-button"
-                         *ngIf="hasNextStep(i)">
-                        <button class="button primary"
-                                (click)="goToNextStep(i)">
-                            Étape Suivante →
-                        </button>
+                            <div class="media-container"
+                                 *ngIf="step.lockedVideo">
+                                <div class="video-frame">
+                                    <video [src]="step.lockedVideo"
+                                           controls></video>
+                                    <div class="video-decorations">
+                                        <div class="corner top-left"></div>
+                                        <div class="corner top-right"></div>
+                                        <div class="corner bottom-left"></div>
+                                        <div class="corner bottom-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenu déverrouillé -->
+                        <div *ngIf="step.isUnlocked"
+                             class="unlocked-content">
+
+                            <div class="unlock-badge">
+                                <div class="badge-icon">🏆</div>
+                                <div class="badge-text">Étape Réussie</div>
+                            </div>
+
+                            <div class="content-text">
+                                <p>{{ step.unlockedContent }}</p>
+                            </div>
+
+                            <div class="media-container celebration"
+                                 *ngIf="step.unlockedImage">
+                                <div class="image-frame">
+                                    <img [src]="step.unlockedImage"
+                                         alt="Image du contenu débloqué">
+                                    <div class="sparkle top-left"></div>
+                                    <div class="sparkle top-right"></div>
+                                    <div class="sparkle bottom-left"></div>
+                                    <div class="sparkle bottom-right"></div>
+                                </div>
+                            </div>
+
+                            <div class="media-container"
+                                 *ngIf="step.unlockedVideo">
+                                <div class="video-frame unlocked">
+                                    <video [src]="step.unlockedVideo"
+                                           controls></video>
+                                    <div class="video-decorations">
+                                        <div class="corner top-left"></div>
+                                        <div class="corner top-right"></div>
+                                        <div class="corner bottom-left"></div>
+                                        <div class="corner bottom-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bouton d'étape suivante -->
+                            <div class="next-step-button"
+                                 *ngIf="hasNextStep(i)">
+                                <button class="button primary"
+                                        (click)="goToNextStep(i)">
+                                    <span class="button-text">Étape Suivante</span>
+                                    <span class="button-icon">→</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

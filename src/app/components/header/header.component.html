@@ -1,19 +1,49 @@
 <header>
+    <!-- Decorative elements -->
+    <div class="header-decorations">
+        <div class="circuit-line left"></div>
+        <div class="circuit-line right"></div>
+        <div class="glow-effect"></div>
+        <div class="scan-line"></div>
+    </div>
+
     <div class="left">
         <button class="back-button"
                 *ngIf="!isHomePage()"
                 (click)="goBack()">
-            <span class="back-icon">←</span>
-            <span class="back-text">Accueil</span>
+            <div class="button-frame">
+                <div class="button-glow"></div>
+                <span class="back-icon">←</span>
+                <span class="back-text">Accueil</span>
+            </div>
         </button>
     </div>
+
     <div class="center">
-        <div class="circle"
+        <div class="circle-container"
              *ngIf="trackingStep">
-            Étape <br> {{ trackingStep.id }}
+            <div class="outer-ring"></div>
+            <div class="mid-ring"></div>
+            <div class="circle">
+                <div class="circle-content">
+                    <div class="step-label">Étape</div>
+                    <div class="step-number">{{ trackingStep.id }}</div>
+                </div>
+                <div class="circle-highlight"></div>
+                <div class="pulse-ring"></div>
+            </div>
+            <div class="circle-decoration top"></div>
+            <div class="circle-decoration right"></div>
+            <div class="circle-decoration bottom"></div>
+            <div class="circle-decoration left"></div>
         </div>
     </div>
-    <div class="right">
 
+    <div class="right">
+        <div class="status-indicator">
+            <div class="status-dot"
+                 [ngClass]="{'active': locationActive}"></div>
+            <div class="status-text">GPS</div>
+        </div>
     </div>
 </header>

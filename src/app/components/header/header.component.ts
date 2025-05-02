@@ -14,7 +14,9 @@ import { Subscription } from 'rxjs';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   trackingStep: Step | null = null;
-  private subscription: Subscription | null = null;
+  locationActive: boolean = false;
+  private stepSubscription: Subscription | null = null;
+  private locationSubscription: Subscription | null = null;
 
   constructor(
     private router: Router,
@@ -23,15 +25,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Subscribe to steps to get the current tracking step
-    this.subscription = this.treasureHuntService.getSteps().subscribe(() => {
-      // Instead of finding the "current" step, get the tracking step directly
-      this.trackingStep = this.treasureHuntService.getCurrentTrackingStep();
-    });
+    this.stepSubscription = this.treasureHuntService
+      .getSteps()
+      .subscribe(() => {
+        this.trackingStep = this.treasureHuntService.getCurrentTrackingStep();
+      });
+
+    // Subscribe to location coordinates to determine if GPS is active
+    this.locationSubscription = this.treasureHuntService
+      .getCurrentCoordinates()
+      .subscribe((coordinates) => {
+        this.locationActive = coordinates !== null;
+      });
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.stepSubscription) {
+      this.stepSubscription.unsubscribe();
+    }
+
+    if (this.locationSubscription) {
+      this.locationSubscription.unsubscribe();
     }
   }
 
