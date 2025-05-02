@@ -1,5 +1,4 @@
 <div class="traceur-container">
-
     <!-- Demande de permission de localisation -->
     <div class="permission-request"
          *ngIf="!locationPermissionGranted">
@@ -16,32 +15,58 @@
     </div>
 
     <!-- Indicateur de proximité -->
-    <div class="proximity-indicator"
+    <div class="tracker-device"
          *ngIf="currentDistance !== null">
-        <div class="distance-info">
-            <span class="distance-icon"
-                  [ngClass]="getDistanceColorClass()">
-                {{ getDistanceIcon() }}
-            </span>
-            <span class="distance-text">Distance : {{ formatDistance(currentDistance) }}</span>
-        </div>
+        <!-- Outer ring -->
+        <div class="device-frame">
+            <!-- Inner display -->
+            <div class="device-display">
+                <!-- Radial progress -->
+                <div class="radial-progress"
+                     [style.background]="getRadialProgressBackground()">
+                    <!-- Center dot -->
+                    <div class="center-dot"
+                         [class.pulse]="isCloseToTarget()">
+                        <div class="inner-dot"></div>
+                    </div>
 
-        <div class="distance-bar-container">
-            <div class="distance-bar">
-                <div class="distance-progress"
-                     [style.width.%]="getDistanceProgress()"
-                     [ngClass]="{'glow-effect': isCloseToTarget()}">
+                    <!-- Orbital rings -->
+                    <div class="orbital-ring ring-1"></div>
+                    <div class="orbital-ring ring-2"></div>
+
+                    <!-- Distance markers -->
+                    <div class="distance-markers">
+                        <span class="marker north">N</span>
+                        <span class="marker east">E</span>
+                        <span class="marker south">S</span>
+                        <span class="marker west">W</span>
+                    </div>
+                </div>
+
+                <!-- Distance readout -->
+                <div class="distance-readout">
+                    <div class="distance-value"
+                         [ngClass]="getDistanceColorClass()">
+                        {{ formatDistance(currentDistance) }}
+                    </div>
+                    <div class="distance-label">Distance</div>
                 </div>
             </div>
-            <div class="distance-labels">
-                <span class="far-label">50m</span>
-                <span class="close-label">10m</span>
+
+            <!-- Device details -->
+            <div class="device-details">
+                <div class="detail-knob top-left"></div>
+                <div class="detail-knob top-right"></div>
+                <div class="detail-knob bottom-left"></div>
+                <div class="detail-knob bottom-right"></div>
             </div>
         </div>
 
-        <div class="location-status"
+        <!-- Status message -->
+        <div class="status-message"
              *ngIf="isCloseToTarget(10)">
-            <p>Vous êtes à proximité ! Restez à moins de 10 mètres pour débloquer.</p>
+            <div class="status-indicator"></div>
+            <p>Signal verrouillé - Restez à proximité</p>
         </div>
     </div>
 
