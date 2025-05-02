@@ -7,7 +7,9 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 15px 0;
-  background-color: #eee;
+  background: linear-gradient(to right, #0a1929, #152238, #0a1929);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 
   .left,
   .right {
@@ -36,14 +38,16 @@ header {
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background-color: #16a085;
+      background: radial-gradient(circle at center, #0077cc, #005299);
       color: white;
       text-align: center;
       font-weight: 500;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 10px rgba(0, 217, 255, 0.7),
+        inset 0 0 15px rgba(0, 217, 255, 0.4);
       font-size: 14px;
       line-height: 1.2;
       transition: transform 0.3s ease;
+      border: 2px solid rgba(0, 217, 255, 0.5);
 
       &:not(:empty) {
         padding: 5px;
@@ -51,6 +55,8 @@ header {
 
       &:hover {
         transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 217, 255, 0.9),
+          inset 0 0 20px rgba(0, 217, 255, 0.6);
       }
     }
   }
@@ -58,21 +64,23 @@ header {
 
 .back-button,
 .settings-button {
-  background: none;
-  border: none;
+  background: rgba(0, 40, 80, 0.5);
+  border: 1px solid rgba(0, 217, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 3px;
+  transition: all 0.2s;
+  color: var(--text-secondary);
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 60, 120, 0.5);
+    box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 80, 160, 0.5);
   }
 }
 
@@ -84,7 +92,9 @@ header {
 
 .back-text {
   font-size: 14px;
-  color: #2c3e50;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 // Media query for small screens
