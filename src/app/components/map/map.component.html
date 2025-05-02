@@ -1,13 +1,4 @@
 <div class="carte-container">
-    <header class="carte-header">
-        <h1>Carte Temporelle</h1>
-        <nav class="carte-nav">
-            <a routerLink="/"
-               class="nav-link">Accueil</a>
-            <a routerLink="/traceur"
-               class="nav-link">Traceur Spatial</a>
-        </nav>
-    </header>
 
     <!-- Indicateur d'étapes -->
     <div class="step-indicator">
@@ -31,7 +22,7 @@
              [class.locked]="!step.isAccessible">
 
             <div class="timeline-header"
-                 (click)="step.isAccessible && onStepOpen(step)">
+                 (click)="step.isAccessible && toggleStep(step)">
                 <div class="status-icon">
                     <span *ngIf="step.isUnlocked">✓</span>
                     <span *ngIf="step.isCurrent && !step.isUnlocked">▶</span>
@@ -39,10 +30,16 @@
                     <span *ngIf="!step.isAccessible">🔒</span>
                 </div>
                 <h3 class="timeline-title">{{ step.isAccessible ? step.title : "???" }}</h3>
+
+                <!-- Caret icon indicator -->
+                <div class="caret-icon"
+                     *ngIf="step.isAccessible">
+                    <span [class.open]="step.isCurrent">&#9654;</span>
+                </div>
             </div>
 
             <div class="timeline-content"
-                 [class.hidden]="!step.isCurrent && !step.isUnlocked">
+                 [class.hidden]="!step.isCurrent">
                 <!-- Contenu verrouillé -->
                 <div *ngIf="!step.isUnlocked">
                     <div class="hint">{{ step.hint }}</div>

@@ -216,6 +216,9 @@ export class TreasureHuntService {
     this.stepsSubject.next([...this.steps]);
   }
 
+  /**
+   * Opens a step and closes all others (used for accordion behavior)
+   */
   onStepOpen(openedStep: Step): void {
     const stepIndex = this.steps.findIndex((step) => step.id === openedStep.id);
 
@@ -231,6 +234,19 @@ export class TreasureHuntService {
       this.saveState(); // Save the state to persist viewingStepIndex
       this.stepsSubject.next([...this.steps]);
     }
+  }
+
+  /**
+   * Closes all steps (sets isCurrent to false for all steps)
+   * Used for accordion behavior when toggling a step that's already open
+   */
+  closeAllSteps(): void {
+    this.steps.forEach((step) => {
+      step.isCurrent = false;
+    });
+
+    this.stepsSubject.next([...this.steps]);
+    this.saveState();
   }
 
   private loadState(): void {

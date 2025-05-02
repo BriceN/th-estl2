@@ -1,5 +1,12 @@
 .app-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  .wrapper {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
 }

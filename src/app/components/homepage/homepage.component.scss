@@ -3,32 +3,17 @@
   flex-direction: column;
   align-items: center;
   gap: 30px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-
-  .title {
-    color: #16a085;
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
-
-  .subtitle {
-    color: #1abc9c;
-    font-size: 1.2rem;
-  }
+  height: 100%;
+  max-height: 100%;
 }
 
 .navigation-cards {
   display: flex;
   gap: 20px;
   width: 100%;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-  }
+  height: 100%;
+  max-height: 100%;
+  flex-direction: column;
 }
 
 .nav-card {
@@ -39,15 +24,20 @@
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  img {
+    height: 25vh;
+  }
 
   h2 {
     color: #2c3e50;
-    margin-top: 0;
+    margin: 0;
   }
 
   p {
-    flex-grow: 1;
-    margin-bottom: 20px;
+    margin: 0;
   }
 }
 

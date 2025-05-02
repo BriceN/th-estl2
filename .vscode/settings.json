@@ -4,5 +4,12 @@
       "externalTemplate": true,
       "style": "scss"
     }
+  },
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false,
+    "yaml": true
   }
 }

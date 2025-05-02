@@ -33,8 +33,15 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  onStepOpen(step: Step): void {
-    this.treasureHuntService.onStepOpen(step);
+  // Implement accordion behavior
+  toggleStep(step: Step): void {
+    if (step.isCurrent) {
+      // If the step is already open, close it
+      this.treasureHuntService.closeAllSteps();
+    } else {
+      // Open the clicked step (close all others)
+      this.treasureHuntService.onStepOpen(step);
+    }
   }
 
   // Check if there's a next step
@@ -49,7 +56,7 @@ export class MapComponent implements OnInit, OnDestroy {
   goToNextStep(currentIndex: number): void {
     if (this.hasNextStep(currentIndex)) {
       const nextStep = this.steps[currentIndex + 1];
-      this.onStepOpen(nextStep);
+      this.treasureHuntService.onStepOpen(nextStep);
     }
   }
 }

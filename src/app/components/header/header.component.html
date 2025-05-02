@@ -1,1 +1,19 @@
-<p>header works!</p>
+<header>
+    <div class="left">
+        <button class="back-button"
+                *ngIf="!isHomePage()"
+                (click)="goBack()">
+            <span class="back-icon">←</span>
+            <span class="back-text">Accueil</span>
+        </button>
+    </div>
+    <div class="center">
+        <div class="circle"
+             *ngIf="trackingStep">
+            Étape <br> {{ trackingStep.id }}
+        </div>
+    </div>
+    <div class="right">
+
+    </div>
+</header>

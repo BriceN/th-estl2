@@ -98,15 +98,20 @@
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .timeline-item {
   background-color: #fff;
-  border-radius: 8px;
+
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  &:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+  &:last-child {
+    border-radius: 0 0 8px 8px;
+  }
 
   &.current {
     border-left: 4px solid #f39c12;
@@ -127,6 +132,7 @@
   align-items: center;
   padding: 15px;
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.02);
@@ -151,13 +157,37 @@
   font-size: 16px;
   font-weight: 500;
   color: #2c3e50;
+  flex-grow: 1;
+}
+
+.caret-icon {
+  margin-left: auto;
+
+  span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+
+    &.open {
+      transform: rotate(90deg);
+    }
+  }
 }
 
 .timeline-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 1;
   padding: 0 15px 15px;
 
   &.hidden {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 
