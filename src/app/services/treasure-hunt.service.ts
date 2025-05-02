@@ -33,8 +33,8 @@ export class TreasureHuntService {
     lng: number;
   } | null>(null);
 
-  // Debug mode flag
-  private isDebugMode = false;
+  // Debug mode Subject
+  private debugModeSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.initializeSteps();
@@ -92,11 +92,12 @@ export class TreasureHuntService {
       step.coordinates.lng
     );
   }
-
   // Check if a location is in proximity
   isInProximity(distance: number | null): boolean {
     if (distance === null) return false;
-    return distance <= this.PROXIMITY_RADIUS || this.isDebugMode;
+    return (
+      distance <= this.PROXIMITY_RADIUS || this.debugModeSubject.getValue()
+    );
   }
 
   // Debug method to simulate being at the current location
@@ -108,14 +109,20 @@ export class TreasureHuntService {
 
   // Toggle debug mode
   toggleDebugMode(): boolean {
-    this.isDebugMode = !this.isDebugMode;
+    const newDebugMode = !this.debugModeSubject.getValue();
+    this.debugModeSubject.next(newDebugMode);
     this.saveState(); // Save debug mode state
-    return this.isDebugMode;
+    return newDebugMode;
   }
 
   // Check if debug mode is enabled
   getDebugMode(): boolean {
-    return this.isDebugMode;
+    return this.debugModeSubject.getValue();
+  }
+
+  // Get debug mode as an Observable
+  getDebugModeObservable(): Observable<boolean> {
+    return this.debugModeSubject.asObservable();
   }
 
   private initializeSteps(): void {
@@ -279,7 +286,7 @@ export class TreasureHuntService {
 
         // Restore debug mode if present
         if (typeof savedState.debugMode === 'boolean') {
-          this.isDebugMode = savedState.debugMode;
+          this.debugModeSubject.next(savedState.debugMode);
         }
 
         this.updateStepStatus();
@@ -304,7 +311,7 @@ export class TreasureHuntService {
           .map((step) => step.id),
         trackingStepIndex: this.trackingStepIndex,
         viewingStepIndex: this.viewingStepIndex,
-        debugMode: this.isDebugMode,
+        debugMode: this.debugModeSubject.getValue(),
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(savedState));

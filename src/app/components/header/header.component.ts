@@ -18,6 +18,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private stepSubscription: Subscription | null = null;
   private locationSubscription: Subscription | null = null;
 
+  // Variables for the debug mode activation
+  private clickCount: number = 0;
+  private clickTimeout: any = null;
+
   constructor(
     private router: Router,
     private treasureHuntService: TreasureHuntService
@@ -47,6 +51,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.locationSubscription) {
       this.locationSubscription.unsubscribe();
     }
+
+    // Clear timeout if component is destroyed
+    if (this.clickTimeout) {
+      clearTimeout(this.clickTimeout);
+    }
   }
 
   goBack(): void {
@@ -59,7 +68,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.router.url === '/';
   }
 
-  toggleDebugMode(): void {
-    this.treasureHuntService.toggleDebugMode();
+  // New method to handle circle container clicks
+  onCircleContainerClick(): void {
+    this.clickCount++;
+    console.log(this.clickCount);
+    // Clear any existing timeout
+    if (this.clickTimeout) {
+      clearTimeout(this.clickTimeout);
+    }
+
+    // If the click count reaches 10, activate debug mode
+    if (this.clickCount >= 10) {
+      this.clickCount = 0;
+      this.treasureHuntService.toggleDebugMode();
+    }
+
+    // Reset click count after 3 seconds of inactivity
+    this.clickTimeout = setTimeout(() => {
+      this.clickCount = 0;
+    }, 3000);
   }
 }

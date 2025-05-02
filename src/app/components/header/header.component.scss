@@ -178,7 +178,7 @@ header {
   padding: 0;
   position: relative;
   transform-style: preserve-3d;
-
+  font-family: "Orbitron", sans-serif;
   .button-frame {
     display: flex;
     align-items: center;
@@ -515,10 +515,6 @@ header {
 
 // Media query for small screens
 @media (max-width: 480px) {
-  .back-text {
-    display: none; // Hide text and only show icon on small screens
-  }
-
   .back-button .button-frame {
     padding: 8px;
   }

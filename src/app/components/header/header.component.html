@@ -13,15 +13,16 @@
                 (click)="goBack()">
             <div class="button-frame">
                 <div class="button-glow"></div>
-                <span class="back-icon">←</span>
-                <span class="back-text">Accueil</span>
+
+                <span class="back-text">Retour</span>
             </div>
         </button>
     </div>
 
     <div class="center">
         <div class="circle-container"
-             *ngIf="trackingStep">
+             *ngIf="trackingStep"
+             (click)="onCircleContainerClick()">
             <div class="outer-ring"></div>
             <div class="mid-ring"></div>
             <div class="circle">
