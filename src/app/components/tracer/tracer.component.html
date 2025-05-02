@@ -50,59 +50,9 @@
         </div>
     </div>
 
-    <!-- Mode Debug -->
-    <div class="debug-panel"
-         *ngIf="debugMode">
-        <h3>Mode Débogage</h3>
-
-        <div class="debug-info"
-             *ngIf="currentStep">
-            <div class="info-row">
-                <span class="label">Étape Actuelle :</span>
-                <span class="value">{{ currentStep.title }}</span>
-            </div>
-
-            <div class="info-row"
-                 *ngIf="currentCoordinates">
-                <span class="label">Vos Coordonnées :</span>
-                <span class="value">
-                    {{ currentCoordinates.lat.toFixed(6) }}, {{ currentCoordinates.lng.toFixed(6) }}
-                </span>
-            </div>
-
-            <div class="info-row"
-                 *ngIf="currentStep.coordinates">
-                <span class="label">Coordonnées Cibles :</span>
-                <span class="value">
-                    {{ currentStep.coordinates.lat.toFixed(6) }}, {{ currentStep.coordinates.lng.toFixed(6) }}
-                </span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Distance à la Cible :</span>
-                <span class="value"
-                      [ngClass]="{'near-target': isCloseToTarget()}">
-                    {{ formatDistance(currentDistance) }}
-                </span>
-            </div>
-        </div>
-
-        <div class="debug-actions">
-            <button class="button accent"
-                    (click)="simulateLocation()">
-                Simuler l'arrivée
-            </button>
-            <button class="button warning"
-                    (click)="resetHunt()">
-                Réinitialiser la chasse
-            </button>
-        </div>
-    </div>
-
-    <footer class="traceur-footer">
-        <div class="debug-toggle"
-             (click)="toggleDebug()">
-            <span>{{ debugMode ? 'Mode Débogage Activé' : '⚙️' }}</span>
-        </div>
-    </footer>
+    <!-- Debug Panel Component -->
+    <app-debug-panel [currentStep]="currentStep"
+                     [currentCoordinates]="currentCoordinates"
+                     [currentDistance]="currentDistance">
+    </app-debug-panel>
 </div>

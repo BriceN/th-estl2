@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Step } from "../models/step.model";
-import { steps } from "../models/steps.data";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Step } from '../models/step.model';
+import { steps } from '../models/steps.data';
 
 // Interface for minimal state data to save in localStorage
 interface SavedState {
@@ -12,13 +12,14 @@ interface SavedState {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class TreasureHuntService {
-  private readonly STORAGE_KEY = "treasureHuntState";
+  private readonly STORAGE_KEY = 'treasureHuntState';
   private readonly LOCATION_CHECK_INTERVAL = 1000; // 1 second
   private readonly UNLOCK_RADIUS = 5; // meters
   private readonly PROXIMITY_RADIUS = 50; // meters - When to show distance indicator
+  private preventImmediateSave = false;
 
   private steps: Step[] = [];
   private trackingStepIndex = 0;
@@ -38,6 +39,17 @@ export class TreasureHuntService {
   constructor() {
     this.initializeSteps();
     this.loadState();
+    // Check if we just reset
+    if (sessionStorage.getItem('hunt_just_reset') === 'true') {
+      // Clear the flag
+      sessionStorage.removeItem('hunt_just_reset');
+      // Prevent saving state for a short time after reload
+      this.preventImmediateSave = true;
+      setTimeout(() => {
+        this.preventImmediateSave = false;
+      }, 3000); // Prevent saving for 3 seconds
+    }
+
     this.startLocationTracking();
   }
 
@@ -111,11 +123,11 @@ export class TreasureHuntService {
   }
 
   private startLocationTracking(): void {
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           (position) => this.checkLocation(position),
-          (error) => console.error("Erreur de géolocalisation:", error),
+          (error) => console.error('Erreur de géolocalisation:', error),
           { enableHighAccuracy: true }
         );
       }, this.LOCATION_CHECK_INTERVAL);
@@ -241,16 +253,16 @@ export class TreasureHuntService {
         }
 
         // Restore indices
-        if (typeof savedState.trackingStepIndex === "number") {
+        if (typeof savedState.trackingStepIndex === 'number') {
           this.trackingStepIndex = savedState.trackingStepIndex;
         }
 
-        if (typeof savedState.viewingStepIndex === "number") {
+        if (typeof savedState.viewingStepIndex === 'number') {
           this.viewingStepIndex = savedState.viewingStepIndex;
         }
 
         // Restore debug mode if present
-        if (typeof savedState.debugMode === "boolean") {
+        if (typeof savedState.debugMode === 'boolean') {
           this.isDebugMode = savedState.debugMode;
         }
 
@@ -266,6 +278,7 @@ export class TreasureHuntService {
   }
 
   private saveState(): void {
+    if (this.preventImmediateSave) return;
     try {
       // Create minimal state object
       const savedState: SavedState = {
@@ -285,7 +298,11 @@ export class TreasureHuntService {
   }
 
   resetHunt(): void {
-    localStorage.clear();
+    this.preventImmediateSave = true;
+    localStorage.removeItem(this.STORAGE_KEY);
+    // Set a flag in sessionStorage (survives page reload)
+    sessionStorage.setItem('hunt_just_reset', 'true');
+
     location.reload();
   }
 

@@ -4,17 +4,17 @@ import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
+import { DebugPanelComponent } from '../debug-panel/debug-panel.component';
 
 @Component({
   selector: 'app-tracer',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, DebugPanelComponent],
   templateUrl: './tracer.component.html',
   styleUrl: './tracer.component.scss',
 })
 export class TracerComponent implements OnInit, OnDestroy {
   locationPermissionGranted = false;
-  debugMode = false;
   currentDistance: number | null = null;
   currentStep: Step | null = null;
   currentCoordinates: { lat: number; lng: number } | null = null;
@@ -24,7 +24,6 @@ export class TracerComponent implements OnInit, OnDestroy {
 
   constructor(public treasureHuntService: TreasureHuntService) {
     this.checkLocationPermission();
-    this.debugMode = this.treasureHuntService.getDebugMode();
   }
 
   ngOnInit(): void {
@@ -154,30 +153,5 @@ export class TracerComponent implements OnInit, OnDestroy {
   // Check if we're close to target
   isCloseToTarget(threshold: number = 10): boolean {
     return this.currentDistance !== null && this.currentDistance <= threshold;
-  }
-
-  // Debug methods
-  toggleDebug(): void {
-    this.debugMode = this.treasureHuntService.toggleDebugMode();
-    if (this.debugMode) {
-      alert('Mode débogage activé');
-    } else {
-      alert('Mode débogage désactivé');
-    }
-  }
-
-  simulateLocation(): void {
-    this.treasureHuntService.simulateLocationReached();
-    alert("Arrivée à l'emplacement simulée !");
-  }
-
-  resetHunt(): void {
-    if (
-      confirm(
-        'Êtes-vous sûr de vouloir réinitialiser votre progression ? Cette action ne peut pas être annulée.'
-      )
-    ) {
-      this.treasureHuntService.resetHunt();
-    }
   }
 }

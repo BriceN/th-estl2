@@ -1,0 +1,82 @@
+.debug-panel {
+  background-color: #e8f5e9;
+  border: 1px dashed #66bb6a;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  h3 {
+    margin-top: 0;
+    color: #2ecc71;
+  }
+}
+
+.debug-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 5px;
+
+  .label {
+    font-weight: bold;
+    min-width: 150px;
+  }
+
+  .value {
+    font-family: monospace;
+
+    &.near-target {
+      color: #27ae60;
+      font-weight: bold;
+    }
+  }
+}
+
+.debug-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.debug-toggle {
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 20px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Buttons
+.button {
+  display: inline-block;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+
+  &.accent {
+    background-color: #f39c12;
+    color: white;
+
+    &:hover {
+      background-color: #e67e22;
+    }
+  }
+
+  &.warning {
+    background-color: #e74c3c;
+    color: white;
+
+    &:hover {
+      background-color: #c0392b;
+    }
+  }
+}

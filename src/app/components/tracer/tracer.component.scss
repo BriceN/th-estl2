@@ -26,8 +26,7 @@
 }
 
 .permission-request,
-.current-step-card,
-.debug-panel {
+.current-step-card {
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
@@ -72,24 +71,6 @@
 
     &:hover {
       background-color: #2980b9;
-    }
-  }
-
-  &.accent {
-    background-color: #f39c12;
-    color: white;
-
-    &:hover {
-      background-color: #e67e22;
-    }
-  }
-
-  &.warning {
-    background-color: #e74c3c;
-    color: white;
-
-    &:hover {
-      background-color: #c0392b;
     }
   }
 }
@@ -230,58 +211,4 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
-}
-
-.debug-panel {
-  background-color: #e8f5e9;
-  border: 1px dashed #66bb6a;
-
-  h3 {
-    margin-top: 0;
-    color: #2ecc71;
-  }
-}
-
-.debug-info {
-  margin-bottom: 20px;
-}
-
-.info-row {
-  display: flex;
-  margin-bottom: 5px;
-
-  .label {
-    font-weight: bold;
-    min-width: 150px;
-  }
-
-  .value {
-    font-family: monospace;
-
-    &.near-target {
-      color: #27ae60;
-      font-weight: bold;
-    }
-  }
-}
-
-.debug-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.traceur-footer {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.debug-toggle {
-  display: inline-block;
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 4px;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
 }
