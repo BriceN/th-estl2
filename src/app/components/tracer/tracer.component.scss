@@ -1,0 +1,287 @@
+.traceur-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.traceur-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    color: #16a085;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #16a085;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.permission-request,
+.current-step-card,
+.debug-panel {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.alert-box {
+  padding: 15px;
+  border-radius: 5px;
+
+  &.warning {
+    background-color: #fff3e0;
+    border-left: 4px solid #ffb300;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+
+  &.primary {
+    background-color: #16a085;
+    color: white;
+
+    &:hover {
+      background-color: #1abc9c;
+    }
+  }
+
+  &.secondary {
+    background-color: #3498db;
+    color: white;
+
+    &:hover {
+      background-color: #2980b9;
+    }
+  }
+
+  &.accent {
+    background-color: #f39c12;
+    color: white;
+
+    &:hover {
+      background-color: #e67e22;
+    }
+  }
+
+  &.warning {
+    background-color: #e74c3c;
+    color: white;
+
+    &:hover {
+      background-color: #c0392b;
+    }
+  }
+}
+
+.hint {
+  font-style: italic;
+  color: #8e44ad;
+  background-color: #f4ecf7;
+  padding: 10px;
+  border-left: 3px solid #9b59b6;
+  border-radius: 4px;
+}
+
+.media-container {
+  margin: 20px 0;
+
+  img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+}
+
+.proximity-indicator {
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(to right, #ecf0f1, #e0f7fa);
+  border-radius: 8px;
+  border: 1px solid #bdc3c7;
+}
+
+.distance-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.distance-icon {
+  font-size: 24px;
+  margin-right: 10px;
+
+  &.tres-chaud {
+    animation: burn 1.5s infinite;
+  }
+
+  &.froid {
+    color: #3498db;
+  }
+
+  &.tiede {
+    color: #8e44ad;
+  }
+
+  &.chaud {
+    color: #f39c12;
+  }
+
+  &.tres-chaud {
+    color: #e74c3c;
+  }
+}
+
+@keyframes burn {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+.distance-bar-container {
+  margin-top: 10px;
+}
+
+.distance-bar {
+  height: 10px;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.distance-progress {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease-out;
+  background: linear-gradient(to right, #3498db, #8e44ad, #f39c12, #e74c3c);
+
+  &.glow-effect {
+    animation: glow 1.5s infinite;
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 6px rgba(231, 76, 60, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(231, 76, 60, 1);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(231, 76, 60, 0.6);
+  }
+}
+
+.distance-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.far-label {
+  color: #3498db;
+}
+.close-label {
+  color: #e74c3c;
+}
+
+.location-status {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #d1f2eb;
+  border-radius: 5px;
+  border: 1px solid #a3e4d7;
+
+  p {
+    margin: 0;
+  }
+}
+
+.navigation-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.debug-panel {
+  background-color: #e8f5e9;
+  border: 1px dashed #66bb6a;
+
+  h3 {
+    margin-top: 0;
+    color: #2ecc71;
+  }
+}
+
+.debug-info {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 5px;
+
+  .label {
+    font-weight: bold;
+    min-width: 150px;
+  }
+
+  .value {
+    font-family: monospace;
+
+    &.near-target {
+      color: #27ae60;
+      font-weight: bold;
+    }
+  }
+}
+
+.debug-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.traceur-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.debug-toggle {
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
