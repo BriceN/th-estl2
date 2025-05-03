@@ -1,4 +1,6 @@
-export const steps = [
+import { Step } from './step.model';
+
+export const steps: Step[] = [
   {
     id: 1,
     title: 'Bout de la rue',
@@ -14,6 +16,7 @@ export const steps = [
     isUnlocked: false,
     isAccessible: true,
     isCurrent: true,
+    year: 1996,
   },
   {
     id: 2,
@@ -30,6 +33,7 @@ export const steps = [
     isUnlocked: false,
     isAccessible: false,
     isCurrent: false,
+    year: 1999,
   },
   {
     id: 3,
@@ -50,5 +54,27 @@ export const steps = [
     isUnlocked: false,
     isAccessible: false,
     isCurrent: false,
+    year: 2007,
+  },
+  {
+    id: 3,
+    title: 'Marché',
+    subtitle: 'Découvrez le trésor perdu',
+    coordinates: { lat: 49.2599726573367, lng: 4.031611159574977 },
+    hint: "Là où l'eau rencontre la pierre, l'artefact attend",
+    lockedImage:
+      'https://images.unsplash.com/photo-1519677584237-752f8853252e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    lockedVideo:
+      'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    unlockedContent:
+      "L'ancien artefact est à vous ! Vous avez terminé la chasse au trésor.",
+    unlockedImage:
+      'https://images.unsplash.com/photo-1531873568041-086189c151da?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    unlockedVideo:
+      'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
+    isUnlocked: false,
+    isAccessible: false,
+    isCurrent: false,
+    year: 2007,
   },
 ];

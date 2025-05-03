@@ -15,4 +15,5 @@ export interface Step {
   isUnlocked: boolean;
   isAccessible: boolean;
   isCurrent: boolean;
+  year: number;
 }

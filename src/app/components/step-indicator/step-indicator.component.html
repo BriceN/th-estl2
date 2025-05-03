@@ -1,5 +1,6 @@
 <div class="step-indicator">
     <div class="indicator-frame">
+        <div class="right-gradient"></div>
         <div class="line-container">
             <div class="line"></div>
             <div class="line-pulse"></div>
@@ -16,7 +17,7 @@
                     <div class="dot-glow"></div>
                     <div class="dot-pulse"
                          *ngIf="step.isCurrent"></div>
-                    <div class="step-number">{{ i + 1 }}</div>
+                    <div class="step-number">{{ step.isAccessible ? step.year : "???" }}</div>
                 </div>
             </div>
         </div>
