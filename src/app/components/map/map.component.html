@@ -18,28 +18,8 @@
             <div class="header-decoration"></div>
         </div>
 
-        <!-- Indicateur d'étapes Amélioré -->
-        <div class="step-indicator">
-            <div class="indicator-frame">
-                <div class="line-container">
-                    <div class="line"></div>
-                    <div class="line-pulse"></div>
-                </div>
-                <div class="dots">
-                    <div *ngFor="let step of steps; let i = index"
-                         class="step-dot"
-                         [class.completed]="step.isUnlocked"
-                         [class.current]="step.isCurrent"
-                         [class.locked]="!step.isAccessible">
-                        <div class="dot-inner"></div>
-                        <div class="dot-glow"></div>
-                        <div class="dot-pulse"
-                             *ngIf="step.isCurrent"></div>
-                        <div class="step-number">{{ i + 1 }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Step Indicator Component -->
+        <app-step-indicator [steps]="steps"></app-step-indicator>
 
         <!-- Liste des étapes -->
         <div class="timeline">

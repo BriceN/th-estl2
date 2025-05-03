@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { Step } from '../../models/step.model';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
+import { StepIndicatorComponent } from '../step-indicator/step-indicator.component';
 
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, StepIndicatorComponent],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })

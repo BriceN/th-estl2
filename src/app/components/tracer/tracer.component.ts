@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
@@ -9,7 +8,7 @@ import { DebugPanelComponent } from '../debug-panel/debug-panel.component';
 @Component({
   selector: 'app-tracer',
   standalone: true,
-  imports: [CommonModule, RouterLink, DebugPanelComponent],
+  imports: [CommonModule, DebugPanelComponent],
   templateUrl: './tracer.component.html',
   styleUrl: './tracer.component.scss',
 })
