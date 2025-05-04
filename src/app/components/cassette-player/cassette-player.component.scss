@@ -1,0 +1,471 @@
+.cassette-player {
+  width: 100%;
+  max-width: 400px;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  cursor: pointer; // Make it clear the whole component is clickable
+
+  // Add visual feedback for hover
+  &:hover .cassette-container {
+    box-shadow: 0 0 35px rgba(0, 217, 255, 0.6),
+      0 0 65px rgba(0, 217, 255, 0.25), inset 0 0 20px rgba(0, 217, 255, 0.15),
+      inset 0 0 40px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.cassette-container {
+  position: relative;
+  background: linear-gradient(145deg, #0a1832, #162d54, #0f1d3a);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5), 0 0 60px rgba(0, 217, 255, 0.2),
+    inset 0 0 20px rgba(0, 217, 255, 0.1), inset 0 0 40px rgba(0, 0, 0, 0.8);
+  transform: rotateX(8deg) rotateY(-4deg);
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 255, 255, 0.15),
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(0, 217, 255, 0.1),
+        transparent 50%
+      );
+    pointer-events: none;
+    animation: hologram-shift 5s ease-in-out infinite;
+  }
+}
+
+.cassette-video {
+  width: 100%;
+  height: 100%; // Add this
+  object-fit: cover; // This will make the video fill the container
+  border-radius: 5px;
+  filter: brightness(1.1) contrast(1.2) hue-rotate(5deg);
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 0 0 30px rgba(0, 217, 255, 0.3),
+    inset 0 0 60px rgba(0, 0, 0, 0.6);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 2px,
+      rgba(0, 217, 255, 0.05) 2px,
+      rgba(0, 217, 255, 0.05) 4px
+    );
+    animation: scan-lines 1s linear infinite;
+    pointer-events: none;
+  }
+}
+
+.cassette-controls {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.play-pause-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #00a8ff, #0066cc),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  border: 3px solid transparent;
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.5),
+    inset 0 0 20px rgba(0, 0, 0, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+
+  // Energy wave effect
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 217, 255, 0.5);
+    transform: translate(-50%, -50%);
+    animation: energy-wave 2s ease-out infinite;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 35px rgba(0, 217, 255, 1), 0 0 60px rgba(0, 217, 255, 0.7),
+      inset 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.5);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.9);
+    position: relative;
+    z-index: 1;
+
+    &.play {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.cassette-lights {
+  position: absolute;
+  top: 19px;
+  right: 1px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+
+  .light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #1a2942, #0a1832),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    border: 2px solid rgba(100, 130, 160, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5), 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+      background: radial-gradient(
+          circle at 30% 30%,
+          var(--accent-green),
+          #00cc7a
+        ),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+      border-color: rgba(0, 255, 157, 0.7);
+      box-shadow: 0 0 20px rgba(0, 255, 157, 0.9),
+        0 0 30px rgba(0, 255, 157, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+      animation: glow-pulse 1s infinite alternate;
+
+      &::before {
+        background: white;
+        box-shadow: 0 0 5px white;
+      }
+    }
+  }
+}
+
+// Visual enhancements
+.cassette-container {
+  // Neon circuit lines
+  .circuit-patterns {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+
+    .circuit-line {
+      position: absolute;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--text-secondary),
+        transparent
+      );
+      height: 1px;
+      opacity: 0.4;
+      animation: circuit-flow 3s ease-in-out infinite;
+
+      &:nth-child(1) {
+        top: 15%;
+        left: 0;
+        width: 100%;
+        animation-delay: 0s;
+      }
+
+      &:nth-child(2) {
+        bottom: 15%;
+        left: 0;
+        width: 100%;
+        animation-delay: 1s;
+      }
+
+      &.vertical {
+        height: 100%;
+        width: 1px;
+        animation: circuit-flow-vertical 3s ease-in-out infinite;
+
+        &:nth-child(3) {
+          left: 20%;
+          animation-delay: 0.5s;
+        }
+
+        &:nth-child(4) {
+          right: 20%;
+          animation-delay: 1.5s;
+        }
+      }
+    }
+  }
+
+  // Data stream effects
+  .data-stream {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    opacity: 0.3;
+    z-index: 0;
+
+    .data-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      animation: data-flow 4s linear infinite;
+      box-shadow: 0 0 5px var(--text-secondary);
+    }
+  }
+}
+
+// Additional holographic effects
+.cassette-video {
+  // Holographic interference
+  .holo-interference {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 217, 255, 0.05) 1px,
+      rgba(0, 217, 255, 0.05) 2px
+    );
+    animation: interference-move 1s linear infinite;
+    pointer-events: none;
+  }
+
+  // Chromatic aberration effect
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at center,
+      transparent 60%,
+      rgba(255, 0, 0, 0.05) 70%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+}
+
+// Advanced animations
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hologram-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(2px, -2px);
+  }
+  50% {
+    transform: translate(-1px, 2px);
+  }
+  75% {
+    transform: translate(-2px, -1px);
+  }
+}
+
+@keyframes scan-lines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes energy-wave {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.8;
+  }
+  100% {
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.7), 0 0 30px rgba(0, 255, 157, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(0, 255, 157, 0.9), 0 0 50px rgba(0, 255, 157, 0.7);
+  }
+}
+
+@keyframes circuit-flow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px 0;
+  }
+}
+
+@keyframes circuit-flow-vertical {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100px;
+  }
+}
+
+@keyframes data-flow {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(400% * var(--tx)), calc(400% * var(--ty)));
+    opacity: 0;
+  }
+}
+
+@keyframes interference-move {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-2px, -2px);
+  }
+}
+
+// Volume indicator (new feature)
+.volume-indicator {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  z-index: 10;
+
+  .volume-bar {
+    width: 3px;
+    height: 15px;
+    background: linear-gradient(
+      to top,
+      rgba(0, 217, 255, 0.3),
+      rgba(0, 217, 255, 0.7)
+    );
+    border-radius: 1px;
+    transform-origin: bottom;
+    animation: volume-bounce 0.8s ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+    &:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes volume-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}

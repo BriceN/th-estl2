@@ -16,4 +16,5 @@ export interface Step {
   isAccessible: boolean;
   isCurrent: boolean;
   year: number;
+  cassette: string;
 }

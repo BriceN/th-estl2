@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { CassettePlayerComponent } from '../cassette-player/cassette-player.component';
 
 import { Step } from '../../models/step.model';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
@@ -9,7 +10,7 @@ import { StepIndicatorComponent } from '../step-indicator/step-indicator.compone
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, StepIndicatorComponent],
+  imports: [CommonModule, StepIndicatorComponent, CassettePlayerComponent],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })

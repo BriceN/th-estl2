@@ -120,6 +120,10 @@
                                 </div>
                             </div>
 
+                            <div *ngIf="step.cassette">
+                                <app-cassette-player [cassetteFile]="step.cassette"></app-cassette-player>
+                            </div>
+
                             <div class="media-container"
                                  *ngIf="step.unlockedVideo">
                                 <div class="video-frame unlocked">

@@ -1,0 +1,74 @@
+<div class="cassette-player"
+     (click)="togglePlayPause()">
+    <div class="cassette-container">
+        <!-- Video Element -->
+        <video #cassetteVideo
+               class="cassette-video"
+               [src]="'/video/cassette.mp4'"
+               loop
+               muted
+               (play)="onVideoPlay()"
+               (pause)="onVideoPause()"
+               (ended)="onVideoEnd()">
+        </video>
+
+        <!-- Audio Element -->
+        <audio #cassetteAudio
+               [src]="'/audio/cassettes/' + cassetteFile"
+               (ended)="onAudioEnded()">
+        </audio>
+
+        <!-- Holographic Interference Effect -->
+        <div class="holo-interference"></div>
+
+        <!-- Circuit Patterns -->
+        <div class="circuit-patterns">
+            <div class="circuit-line"></div>
+            <div class="circuit-line"></div>
+            <div class="circuit-line vertical"></div>
+            <div class="circuit-line vertical"></div>
+        </div>
+
+        <!-- Data Stream Effect -->
+        <div class="data-stream">
+            <div class="data-particle"
+                 style="--tx: 1; --ty: 0.5;"></div>
+            <div class="data-particle"
+                 style="--tx: -0.8; --ty: 1;"></div>
+            <div class="data-particle"
+                 style="--tx: 0.6; --ty: -0.7;"></div>
+            <div class="data-particle"
+                 style="--tx: -0.5; --ty: -0.5;"></div>
+            <div class="data-particle"
+                 style="--tx: 0.9; --ty: 0.8;"></div>
+        </div>
+
+        <!-- Play/Pause Control - Hidden when playing -->
+        <div class="cassette-controls"
+             *ngIf="!isPlaying">
+            <button class="play-pause-button">
+                <span class="icon play">
+                    {{ '▶' }}
+                </span>
+            </button>
+        </div>
+
+        <!-- Status Lights -->
+        <div class="cassette-lights">
+            <div class="light"
+                 [class.active]="isPlaying"></div>
+            <div class="light"
+                 [class.active]="isPlaying"></div>
+        </div>
+
+        <!-- Volume Indicator (new feature) -->
+        <div class="volume-indicator"
+             *ngIf="isPlaying">
+            <div class="volume-bar"></div>
+            <div class="volume-bar"></div>
+            <div class="volume-bar"></div>
+            <div class="volume-bar"></div>
+            <div class="volume-bar"></div>
+        </div>
+    </div>
+</div>
