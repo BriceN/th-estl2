@@ -1,20 +1,34 @@
 <div class="traceur-container">
-    <!-- Demande de permission de localisation -->
-    <!-- <div class="permission-request"
-         *ngIf="!locationPermissionGranted">
-        <div class="alert-box warning">
-            <h3>Accès à la Localisation Requis</h3>
-            <p>Cette chasse au trésor utilise le GPS de votre appareil pour vérifier quand vous atteignez
-                chaque lieu. Sans accès à la localisation, vous ne pourrez pas
-                progresser dans la chasse.</p>
-            <button class="button primary"
-                    (click)="requestLocationPermission()">
-                Activer la Localisation
-            </button>
-        </div>
-    </div> -->
 
-    <!-- TODO add current tracking step title -->
+    <!-- Sci-fi decorations -->
+    <div class="sci-fi-decorations">
+        <div class="circuit-pattern">
+            <div class="circuit-line"></div>
+            <div class="circuit-line"></div>
+            <div class="circuit-line"></div>
+            <div class="circuit-line vertical"></div>
+            <div class="circuit-line vertical"></div>
+        </div>
+
+        <div class="holographic-overlay">
+            <div class="holo-particle"></div>
+            <div class="holo-particle"></div>
+            <div class="holo-particle"></div>
+            <div class="holo-particle"></div>
+        </div>
+
+        <div class="data-streams">
+            <div class="data-stream"></div>
+            <div class="data-stream"></div>
+        </div>
+    </div>
+
+    <!-- Current tracking step title -->
+    <div class="step-title-container"
+         *ngIf="currentStep">
+        <div class="step-title">{{ currentStep.title }}</div>
+        <div class="step-counter">Année {{ currentStep.year }}</div>
+    </div>
 
     <!-- Indicateur de proximité -->
     <div class="tracker-device"
