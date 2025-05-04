@@ -52,6 +52,10 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 217, 255, 0.5);
   }
 
+  &:active {
+    background: radial-gradient(circle at 30% 30%, #0077cc, #004980);
+  }
+
   img {
     height: 25vh;
     filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.5));
