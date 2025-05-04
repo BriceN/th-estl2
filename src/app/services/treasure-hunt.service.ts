@@ -323,6 +323,7 @@ export class TreasureHuntService {
   resetHunt(): void {
     this.preventImmediateSave = true;
     localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem('has_seen_intro');
     // Set a flag in sessionStorage (survives page reload)
     sessionStorage.setItem('hunt_just_reset', 'true');
 
