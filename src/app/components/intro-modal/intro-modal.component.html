@@ -7,54 +7,124 @@
              [ngClass]="{'animating': isAnimating}">
             <!-- Safe Door Frame -->
             <div class="safe-frame">
-                <!-- Circuit Lines -->
-                <div class="circuit-lines">
-                    <div class="circuit-horizontal top"></div>
-                    <div class="circuit-horizontal bottom"></div>
-                    <div class="circuit-vertical left"></div>
-                    <div class="circuit-vertical right"></div>
+                <!-- Energy Field -->
+                <div class="energy-field"></div>
+
+                <!-- Advanced Circuit Network -->
+                <div class="circuit-network">
+                    <div class="circuit-line horizontal top primary"></div>
+                    <div class="circuit-line horizontal top secondary"></div>
+                    <div class="circuit-line horizontal bottom primary"></div>
+                    <div class="circuit-line horizontal bottom secondary"></div>
+                    <div class="circuit-line vertical left primary"></div>
+                    <div class="circuit-line vertical left secondary"></div>
+                    <div class="circuit-line vertical right primary"></div>
+                    <div class="circuit-line vertical right secondary"></div>
+
+                    <!-- Circuit nodes -->
+                    <div class="circuit-node top-left"></div>
+                    <div class="circuit-node top-right"></div>
+                    <div class="circuit-node bottom-left"></div>
+                    <div class="circuit-node bottom-right"></div>
                 </div>
 
                 <!-- Door Panels -->
                 <div class="door-panel top-panel">
-                    <div class="panel-detail"></div>
-                    <div class="panel-decoration">
-                        <div class="deco-line"></div>
-                        <div class="deco-circle"></div>
+                    <div class="panel-surface">
+                        <div class="panel-light-beams"></div>
+                        <div class="panel-detail"></div>
+                        <div class="panel-grid"></div>
+                        <div class="panel-hex-pattern"></div>
+                        <div class="panel-decoration">
+                            <div class="deco-line primary"></div>
+                            <div class="deco-line secondary"></div>
+                            <div class="deco-circle outer"></div>
+                            <div class="deco-circle middle"></div>
+                            <div class="deco-circle inner"></div>
+                        </div>
+                        <div class="panel-corner top-left"></div>
+                        <div class="panel-corner top-right"></div>
                     </div>
                 </div>
 
                 <div class="door-panel bottom-panel">
-                    <div class="panel-detail"></div>
-                    <div class="panel-decoration">
-                        <div class="deco-line"></div>
-                        <div class="deco-circle"></div>
+                    <div class="panel-surface">
+                        <div class="panel-light-beams"></div>
+                        <div class="panel-detail"></div>
+                        <div class="panel-grid"></div>
+                        <div class="panel-hex-pattern"></div>
+                        <div class="panel-decoration">
+                            <div class="deco-line primary"></div>
+                            <div class="deco-line secondary"></div>
+                            <div class="deco-circle outer"></div>
+                            <div class="deco-circle middle"></div>
+                            <div class="deco-circle inner"></div>
+                        </div>
+                        <div class="panel-corner bottom-left"></div>
+                        <div class="panel-corner bottom-right"></div>
                     </div>
                 </div>
 
                 <!-- Central Circle Mechanism -->
                 <div class="central-mechanism"
                      (click)="startUnlockAnimation()">
-                    <div class="mechanism-outer-ring"></div>
-                    <div class="mechanism-middle-ring"></div>
+                    <div class="mechanism-outer-ring">
+                        <div class="outer-ring-glow"></div>
+                        <div class="outer-ring-lights"></div>
+                    </div>
+                    <div class="mechanism-middle-ring">
+                        <div class="middle-ring-pattern"></div>
+                    </div>
                     <div class="mechanism-inner-circle">
+                        <div class="inner-circle-glow"></div>
                         <div class="mechanism-center">
-                            <div class="center-icon">✧</div>
+                            <div class="center-icon">⊕</div>
+                            <div class="center-glow"></div>
                         </div>
                     </div>
                     <div class="mechanism-teeth">
                         <div class="tooth"
-                             *ngFor="let i of [1,2,3,4,5,6,7,8]"
-                             [style.transform]="'rotate(' + (i * 45) + 'deg)'"></div>
+                             *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]"
+                             [style.transform]="'rotate(' + (i * 30) + 'deg)'"></div>
+                    </div>
+                    <div class="mechanism-secondary-ring"></div>
+                    <div class="unlock-indicator">
+
                     </div>
                 </div>
 
-                <!-- Holographic Particles -->
-                <div class="holo-particles">
-                    <div class="particle"
-                         *ngFor="let i of [1,2,3,4,5,6,7,8]"
-                         [style.animation-delay]="(i * 0.2) + 's'"></div>
+                <!-- Advanced Holographic Effects -->
+                <div class="holographic-effects">
+                    <div class="holo-scan-line"></div>
+                    <div class="holo-interference"></div>
+
+                    <!-- Enhanced Particles -->
+                    <div class="holo-particles">
+                        <div class="particle"
+                             *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
+                             [style.animation-delay]="(i * 0.15) + 's'"
+                             [style.left]="(i % 4) * 25 + '%'"
+                             [style.top]="(i / 4) * 25 + '%'"></div>
+                    </div>
+
+                    <!-- Energy streams -->
+                    <div class="energy-streams">
+                        <div class="energy-stream"
+                             *ngFor="let i of [1,2,3,4]"
+                             [style.animation-delay]="(i * 0.5) + 's'"></div>
+                    </div>
+
+                    <!-- Quantum dots -->
+                    <div class="quantum-dots">
+                        <div class="quantum-dot"
+                             *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"
+                             [style.animation-delay]="(i * 0.1) + 's'"
+                             [style.transform]="'rotate(' + (i * 36) + 'deg) translateY(-80px)'"></div>
+                    </div>
                 </div>
+
+                <!-- Ambient light -->
+                <div class="ambient-light"></div>
             </div>
         </div>
 
