@@ -1,0 +1,129 @@
+<div class="intro-modal-overlay"
+     *ngIf="showModal">
+    <div class="modal-container">
+        <!-- First Layer: Safe Door -->
+        <div class="safe-door"
+             *ngIf="showFirstLayer"
+             [ngClass]="{'animating': isAnimating}">
+            <!-- Safe Door Frame -->
+            <div class="safe-frame">
+                <!-- Circuit Lines -->
+                <div class="circuit-lines">
+                    <div class="circuit-horizontal top"></div>
+                    <div class="circuit-horizontal bottom"></div>
+                    <div class="circuit-vertical left"></div>
+                    <div class="circuit-vertical right"></div>
+                </div>
+
+                <!-- Door Panels -->
+                <div class="door-panel top-panel">
+                    <div class="panel-detail"></div>
+                    <div class="panel-decoration">
+                        <div class="deco-line"></div>
+                        <div class="deco-circle"></div>
+                    </div>
+                </div>
+
+                <div class="door-panel bottom-panel">
+                    <div class="panel-detail"></div>
+                    <div class="panel-decoration">
+                        <div class="deco-line"></div>
+                        <div class="deco-circle"></div>
+                    </div>
+                </div>
+
+                <!-- Central Circle Mechanism -->
+                <div class="central-mechanism"
+                     (click)="startUnlockAnimation()">
+                    <div class="mechanism-outer-ring"></div>
+                    <div class="mechanism-middle-ring"></div>
+                    <div class="mechanism-inner-circle">
+                        <div class="mechanism-center">
+                            <div class="center-icon">✧</div>
+                        </div>
+                    </div>
+                    <div class="mechanism-teeth">
+                        <div class="tooth"
+                             *ngFor="let i of [1,2,3,4,5,6,7,8]"
+                             [style.transform]="'rotate(' + (i * 45) + 'deg)'"></div>
+                    </div>
+                </div>
+
+                <!-- Holographic Particles -->
+                <div class="holo-particles">
+                    <div class="particle"
+                         *ngFor="let i of [1,2,3,4,5,6,7,8]"
+                         [style.animation-delay]="(i * 0.2) + 's'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Layer: Content -->
+        <div class="content-layer"
+             *ngIf="showSecondLayer">
+            <div class="content-container">
+                <div class="content-header">
+                    <h1>Chasse au Trésor Temporelle</h1>
+                    <div class="header-decoration"></div>
+                </div>
+
+                <div class="content-body">
+                    <div class="story-section">
+                        <h2>Transmission Temporelle Activée</h2>
+                        <p class="date-stamp">Coordonnées Temporelles: An 2075 → 30ème Année d'Estelle</p>
+
+                        <p>Bonjour, Estelle du passé. Je suis toi, depuis l'an 2075. Cette "boîte à outils temporelle"
+                            t'a été envoyée pour célébrer ton 30ème anniversaire - une tradition ancestrale établie
+                            depuis la découverte des voyages temporels en 2060.</p>
+
+                        <p>Ce pèlerinage temporel te permettra de revisiter les lieux significatifs de ta vie, de ta
+                            naissance jusqu'à ce jour si spécial.</p>
+                    </div>
+
+                    <div class="tools-section">
+                        <h2>Outils à Ta Disposition</h2>
+
+                        <div class="tool-item">
+                            <div class="tool-icon">🗺️</div>
+                            <div class="tool-description">
+                                <h3>Carte Temporelle</h3>
+                                <p>Liste chronologique des lieux clés de ton parcours</p>
+                            </div>
+                        </div>
+
+                        <div class="tool-item">
+                            <div class="tool-icon">📡</div>
+                            <div class="tool-description">
+                                <h3>Traceur Spatial</h3>
+                                <p>Activation automatique à moins de 100m des points d'intérêt</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-section">
+                        <h2>Ta Mission</h2>
+                        <ul>
+                            <li>Chaque étape sera déverrouillée séquentiellement</li>
+                            <li>Utilise les indices pour localiser chaque lieu</li>
+                            <li>À proximité, le traceur spatial te guidera précisément</li>
+                            <li>En atteignant ton objectif, reçois un message de ton futur-soi</li>
+                        </ul>
+                    </div>
+
+                    <div class="blessing-section">
+                        <p class="blessing-text">Puissent les chakras de ta ligne temporelle s'aligner. Puisses-tu
+                            trouver la paix dans le voyage à travers tes souvenirs.</p>
+                    </div>
+                </div>
+
+                <div class="content-footer">
+                    <button class="close-button"
+                            (click)="closeModal()">
+                        <span>Commencer le Pèlerinage</span>
+                        <div class="button-glow"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
