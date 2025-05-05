@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
 import { DebugPanelComponent } from '../debug-panel/debug-panel.component';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-tracer',
@@ -21,11 +22,15 @@ export class TracerComponent implements OnInit, OnDestroy {
   private distanceSubscription: Subscription | null = null;
   private coordinatesSubscription: Subscription | null = null;
 
-  constructor(public treasureHuntService: TreasureHuntService) {
+  constructor(
+    public treasureHuntService: TreasureHuntService,
+    private audioManagerService: AudioManagerService
+  ) {
     this.checkLocationPermission();
   }
 
   ngOnInit(): void {
+    this.audioManagerService.play('sonar.wav', true);
     this.distanceSubscription = this.treasureHuntService
       .getCurrentDistance()
       .subscribe((distance: number | null) => {
@@ -41,6 +46,7 @@ export class TracerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.audioManagerService.stop('sonar.wav');
     if (this.distanceSubscription) {
       this.distanceSubscription.unsubscribe();
     }

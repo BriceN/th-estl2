@@ -3,7 +3,7 @@ import { Step } from './step.model';
 export const steps: Step[] = [
   {
     id: 1,
-    title: 'Bout de la rue',
+    title: 'Il était une fois...',
     subtitle: 'Commencez au point de départ',
     coordinates: { lat: 49.2589210827042, lng: 4.037472846877561 },
     hint: 'Cherchez la statue qui porte le monde sur ses épaules',
@@ -21,7 +21,7 @@ export const steps: Step[] = [
   },
   {
     id: 2,
-    title: 'Jean 23',
+    title: 'Constance est mère de sureté',
     subtitle: 'Trouvez le passage secret',
     coordinates: { lat: 49.259205055989895, lng: 4.0359924197744945 },
     hint: 'Entre les vieux chênes, un passage se révèle',
@@ -39,7 +39,7 @@ export const steps: Step[] = [
   },
   {
     id: 3,
-    title: 'Marché',
+    title: 'Le pot pourri',
     subtitle: 'Découvrez le trésor perdu',
     coordinates: { lat: 49.2599726573367, lng: 4.031611159574977 },
     hint: "Là où l'eau rencontre la pierre, l'artefact attend",

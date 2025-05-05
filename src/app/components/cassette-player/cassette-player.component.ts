@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-cassette-player',
@@ -15,6 +16,8 @@ export class CassettePlayerComponent implements OnInit {
 
   isPlaying: boolean = false;
 
+  constructor(private audioManagerService: AudioManagerService) {}
+
   ngOnInit() {}
 
   togglePlayPause() {
@@ -25,9 +28,11 @@ export class CassettePlayerComponent implements OnInit {
     const audio = this.audioElement.nativeElement;
 
     if (this.isPlaying) {
+      this.audioManagerService.resumeAll();
       video.pause();
       audio.pause();
     } else {
+      this.audioManagerService.pauseAll();
       video.play();
       audio.play();
     }

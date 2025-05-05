@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
 import { Subscription } from 'rxjs';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-header',
@@ -24,7 +25,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private treasureHuntService: TreasureHuntService
+    private treasureHuntService: TreasureHuntService,
+    private audioManagerService: AudioManagerService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     // Navigate to home page
+    this.audioManagerService.play('click.wav');
     this.router.navigate(['/']);
   }
 
