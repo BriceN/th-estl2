@@ -56,7 +56,7 @@ export class IntroModalComponent implements OnInit {
   }
 
   closeModal() {
-    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
+    this.audioManagerService.play('click.wav', false, false, 0, 0.2);
     this.showModal = false;
     // Save that user has seen the intro
     localStorage.setItem(this.STORAGE_KEY, 'true');

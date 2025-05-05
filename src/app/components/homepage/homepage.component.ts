@@ -17,6 +17,6 @@ export class HomepageComponent implements OnInit {
     this.audioManagerService.play('space.ogg', true, true, 1000, 0.05);
   }
   playClickSound() {
-    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
+    this.audioManagerService.play('click.wav', false, false, 0, 0.2);
   }
 }
