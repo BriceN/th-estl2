@@ -26,6 +26,9 @@ export class IntroModalComponent implements OnInit {
     const hasSeenIntro = localStorage.getItem(this.STORAGE_KEY);
     if (!hasSeenIntro) {
       this.showModal = true;
+      setTimeout(() => {
+        this.audioManagerService.stopAll();
+      }, 1000);
     }
   }
 
@@ -40,8 +43,7 @@ export class IntroModalComponent implements OnInit {
       .playMultiple(['servo.wav', 'tension.wav'])
       .then(function () {
         self.audioManagerService.stop('transformers.wav');
-        self.audioManagerService.play('space.ogg', true);
-        self.audioManagerService.setVolume('space.ogg', 0.2);
+        self.audioManagerService.play('space.ogg', true, true, 1000, 0.05);
       });
 
     this.isAnimating = true;
@@ -54,7 +56,7 @@ export class IntroModalComponent implements OnInit {
   }
 
   closeModal() {
-    this.audioManagerService.play('click.wav');
+    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
     this.showModal = false;
     // Save that user has seen the intro
     localStorage.setItem(this.STORAGE_KEY, 'true');
