@@ -21,6 +21,7 @@ export class TracerComponent implements OnInit, OnDestroy {
 
   private distanceSubscription: Subscription | null = null;
   private coordinatesSubscription: Subscription | null = null;
+  private isAlreadyPlayingProximitySound = false;
 
   constructor(
     public treasureHuntService: TreasureHuntService,
@@ -30,7 +31,7 @@ export class TracerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.audioManagerService.play('sonar.wav', true);
+    this.audioManagerService.play('radar.wav', true, true, 500, 0.5);
     this.distanceSubscription = this.treasureHuntService
       .getCurrentDistance()
       .subscribe((distance: number | null) => {
@@ -46,7 +47,8 @@ export class TracerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.audioManagerService.stop('sonar.wav');
+    this.audioManagerService.stop('radar.wav');
+    this.audioManagerService.stop('found_something.wav');
     if (this.distanceSubscription) {
       this.distanceSubscription.unsubscribe();
     }
@@ -132,6 +134,26 @@ export class TracerComponent implements OnInit, OnDestroy {
   }
 
   isCloseToTarget(threshold: number = 10): boolean {
-    return this.currentDistance !== null && this.currentDistance <= threshold;
+    const isClose =
+      this.currentDistance !== null && this.currentDistance <= threshold;
+
+    // Only start playing if we're close AND we weren't already playing
+    if (isClose && !this.isAlreadyPlayingProximitySound) {
+      this.isAlreadyPlayingProximitySound = true;
+      this.audioManagerService.play(
+        'found_something.wav',
+        true,
+        true,
+        500,
+        0.2
+      );
+    }
+    // Only stop playing if we're NOT close AND we were playing
+    else if (!isClose && this.isAlreadyPlayingProximitySound) {
+      this.isAlreadyPlayingProximitySound = false;
+      this.audioManagerService.stop('found_something.wav');
+    }
+
+    return isClose;
   }
 }

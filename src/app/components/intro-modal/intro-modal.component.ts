@@ -52,7 +52,7 @@ export class IntroModalComponent implements OnInit {
       this.showFirstLayer = false;
       this.showSecondLayer = true;
       this.isAnimating = false;
-    }, 3000);
+    }, 9000);
   }
 
   closeModal() {

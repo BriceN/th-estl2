@@ -6,6 +6,7 @@ import { CassettePlayerComponent } from '../cassette-player/cassette-player.comp
 import { Step } from '../../models/step.model';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { StepIndicatorComponent } from '../step-indicator/step-indicator.component';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-map',
@@ -18,7 +19,10 @@ export class MapComponent implements OnInit, OnDestroy {
   steps: Step[] = [];
   private subscription: Subscription | null = null;
 
-  constructor(public treasureHuntService: TreasureHuntService) {}
+  constructor(
+    public treasureHuntService: TreasureHuntService,
+    private audioManagerService: AudioManagerService
+  ) {}
 
   ngOnInit(): void {
     this.subscription = this.treasureHuntService
@@ -39,9 +43,11 @@ export class MapComponent implements OnInit, OnDestroy {
     if (step.isCurrent) {
       // If the step is already open, close it
       this.treasureHuntService.closeAllSteps();
+      this.audioManagerService.play('close.wav');
     } else {
       // Open the clicked step (close all others)
       this.treasureHuntService.onStepOpen(step);
+      this.audioManagerService.play('open.wav');
     }
   }
 
