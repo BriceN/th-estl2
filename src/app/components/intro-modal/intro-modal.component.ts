@@ -47,6 +47,9 @@ export class IntroModalComponent implements OnInit {
       });
 
     this.isAnimating = true;
+    document
+      .querySelector('.central-mechanism')
+      ?.classList.add('scaleMecanism');
     // Start the animation and transition to second layer after 3 seconds
     setTimeout(() => {
       this.showFirstLayer = false;

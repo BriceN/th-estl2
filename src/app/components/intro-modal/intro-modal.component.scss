@@ -1496,6 +1496,23 @@
   }
 }
 
+.scaleMecanism {
+  animation: scale 8s ease-in-out forwards;
+  transform-origin: center;
+  animation-delay: 2s;
+}
+
+@keyframes scale {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(2.5);
+  }
+}
+
 @keyframes ambient-drift {
   0%,
   100% {
