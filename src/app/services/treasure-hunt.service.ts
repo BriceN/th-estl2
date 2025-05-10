@@ -24,26 +24,22 @@ export class TreasureHuntService {
   private steps: Step[] = [];
   private trackingStepIndex = 0;
   private viewingStepIndex = 0;
-  private stepsSubject = new BehaviorSubject<Step[]>([]);
+  private stepsSubject = new BehaviorSubject<Step[]>([]); // Add BehaviorSubjects for the current distance and coordinates
 
-  // Add BehaviorSubjects for the current distance and coordinates
   private currentDistanceSubject = new BehaviorSubject<number | null>(null);
   private currentCoordinatesSubject = new BehaviorSubject<{
     lat: number;
     lng: number;
-  } | null>(null);
+  } | null>(null); // Debug mode Subject
 
-  // Debug mode Subject
   private debugModeSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.initializeSteps();
-    this.loadState();
-    // Check if we just reset
+    this.loadState(); // Check if we just reset
     if (sessionStorage.getItem('hunt_just_reset') === 'true') {
       // Clear the flag
-      sessionStorage.removeItem('hunt_just_reset');
-      // Prevent saving state for a short time after reload
+      sessionStorage.removeItem('hunt_just_reset'); // Prevent saving state for a short time after reload
       this.preventImmediateSave = true;
       setTimeout(() => {
         this.preventImmediateSave = false;
@@ -55,29 +51,24 @@ export class TreasureHuntService {
 
   getSteps(): Observable<Step[]> {
     return this.stepsSubject.asObservable();
-  }
+  } // Method to get the current distance as an Observable
 
-  // Method to get the current distance as an Observable
   getCurrentDistance(): Observable<number | null> {
     return this.currentDistanceSubject.asObservable();
-  }
+  } // Method to get the current coordinates as an Observable
 
-  // Method to get the current coordinates as an Observable
   getCurrentCoordinates(): Observable<{ lat: number; lng: number } | null> {
     return this.currentCoordinatesSubject.asObservable();
-  }
+  } // Get the proximity radius (for components to use)
 
-  // Get the proximity radius (for components to use)
   getProximityRadius(): number {
     return this.PROXIMITY_RADIUS;
-  }
+  } // Get the unlock radius (for components to use)
 
-  // Get the unlock radius (for components to use)
   getUnlockRadius(): number {
     return this.UNLOCK_RADIUS;
-  }
+  } // Calculate distance to a specific step
 
-  // Calculate distance to a specific step
   calculateDistanceToStep(stepId: number): number | null {
     const currentCoords = this.currentCoordinatesSubject.getValue();
     if (!currentCoords) return null;
@@ -91,42 +82,37 @@ export class TreasureHuntService {
       step.coordinates.lat,
       step.coordinates.lng
     );
-  }
-  // Check if a location is in proximity
+  } // Check if a location is in proximity
   isInProximity(distance: number | null): boolean {
     if (distance === null) return false;
     return (
       distance <= this.PROXIMITY_RADIUS || this.debugModeSubject.getValue()
     );
-  }
+  } // Debug method to simulate being at the current location
 
-  // Debug method to simulate being at the current location
   simulateLocationReached(): void {
     if (this.trackingStepIndex < this.steps.length) {
       this.unlockCurrentStep();
     }
-  }
+  } // Toggle debug mode
 
-  // Toggle debug mode
   toggleDebugMode(): boolean {
     const newDebugMode = !this.debugModeSubject.getValue();
     this.debugModeSubject.next(newDebugMode);
     this.saveState(); // Save debug mode state
     return newDebugMode;
-  }
+  } // Check if debug mode is enabled
 
-  // Check if debug mode is enabled
   getDebugMode(): boolean {
     return this.debugModeSubject.getValue();
-  }
+  } // Get debug mode as an Observable
 
-  // Get debug mode as an Observable
   getDebugModeObservable(): Observable<boolean> {
     return this.debugModeSubject.asObservable();
   }
 
   private initializeSteps(): void {
-    this.steps = steps;
+    this.steps = JSON.parse(JSON.stringify(steps)); // Deep copy to avoid modifying original data
   }
 
   private startLocationTracking(): void {
@@ -159,9 +145,18 @@ export class TreasureHuntService {
     }
 
     const trackingStep = this.steps[this.trackingStepIndex];
-    if (!trackingStep || !trackingStep.coordinates) {
-      // Skip if step or coordinates are undefined, set distance to null
-      this.currentDistanceSubject.next(null);
+    if (!trackingStep || !trackingStep.coordinates || trackingStep.isUnlocked) {
+      // Also check if already unlocked
+      // Skip if step or coordinates are undefined, or if step is already unlocked
+      // If the current tracking step is already unlocked, effectively means we are waiting for the next one
+      // or all are done. If all done, trackingStepIndex would be >= steps.length
+      // If current tracking step is unlocked, distance to it is not relevant for unlocking *it*.
+      // Distance should be to the *next* uncompleted tracking step.
+      // This logic is simplified by getCurrentTrackingStep() returning the *next uncompleted* step.
+      // For now, we keep distance to the defined trackingStep.
+      this.currentDistanceSubject.next(
+        this.calculateDistanceToStep(trackingStep.id) ?? null
+      );
       return;
     }
 
@@ -170,9 +165,8 @@ export class TreasureHuntService {
       position.coords.longitude,
       trackingStep.coordinates.lat,
       trackingStep.coordinates.lng
-    );
+    ); // Always update the distance subject
 
-    // Always update the distance subject
     this.currentDistanceSubject.next(distance);
 
     if (distance <= this.UNLOCK_RADIUS) {
@@ -203,15 +197,17 @@ export class TreasureHuntService {
 
   private unlockCurrentStep(): void {
     if (this.trackingStepIndex < this.steps.length) {
-      this.steps[this.trackingStepIndex].isUnlocked = true;
+      const stepToUnlock = this.steps[this.trackingStepIndex];
 
-      if (this.trackingStepIndex < this.steps.length - 1) {
-        this.trackingStepIndex++;
-        this.updateStepStatus();
+      if (!stepToUnlock.isUnlocked) {
+        stepToUnlock.isUnlocked = true; // If it's not the last step, advance the *tracking* index for future accessibility checks.
+
+        if (this.trackingStepIndex < this.steps.length - 1) {
+          this.trackingStepIndex++;
+        } // Set the stepToUnlock as the current one to be viewed. // onStepOpen will handle setting viewingStepIndex, calling updateStepStatus, saving, and emitting.
+
+        this.onStepOpen(stepToUnlock);
       }
-
-      this.saveState();
-      this.stepsSubject.next([...this.steps]);
     }
   }
 
@@ -219,41 +215,46 @@ export class TreasureHuntService {
     this.steps.forEach((step, index) => {
       step.isCurrent = index === this.viewingStepIndex;
       step.isAccessible = index <= this.trackingStepIndex;
-    });
-    this.stepsSubject.next([...this.steps]);
+    }); // No emission here; caller (onStepOpen or loadState) will emit.
   }
-
   /**
    * Opens a step and closes all others (used for accordion behavior)
    */
+
   onStepOpen(openedStep: Step): void {
     const stepIndex = this.steps.findIndex((step) => step.id === openedStep.id);
 
     if (stepIndex !== -1) {
       this.viewingStepIndex = stepIndex;
-
-      // Auto-expand the panel - make the step current
-      this.steps.forEach((step, index) => {
-        step.isCurrent = index === this.viewingStepIndex;
-      });
-
-      this.updateStepStatus();
-      this.saveState(); // Save the state to persist viewingStepIndex
-      this.stepsSubject.next([...this.steps]);
+      this.updateStepStatus(); // Update .isCurrent and .isAccessible flags
+      this.saveState();
+      this.stepsSubject.next([...this.steps]); // Emit the updated steps array
     }
   }
-
   /**
    * Closes all steps (sets isCurrent to false for all steps)
    * Used for accordion behavior when toggling a step that's already open
    */
+
   closeAllSteps(): void {
+    // To close all, we effectively set no step as current for viewing.
+    // A common way is to set viewingStepIndex to an invalid index or handle it in updateStepStatus.
+    // For simplicity, let's assume closing means the *current tracking step* (if not last) becomes the default view.
+    // Or, if the desire is truly to close all expanded views without opening another,
+    // then viewingStepIndex could be set to a sentinel like -1 and updateStepStatus would make all isCurrent false.
+    // Given the current structure, if a step is clicked to close it, MapComponent's toggleStep
+    // might decide to set a default open step or truly close all.
+    // The existing `closeAllSteps` just sets `isCurrent = false`.
     this.steps.forEach((step) => {
       step.isCurrent = false;
     });
+    // If we want to ensure viewingStepIndex reflects this "none open" state:
+    // this.viewingStepIndex = -1; // Or some other indicator that nothing is explicitly open.
+    // However, `updateStepStatus` would still make one current if viewingStepIndex is valid.
+    // Let's stick to the direct modification for now as per existing `closeAllSteps` logic.
 
     this.stepsSubject.next([...this.steps]);
-    this.saveState();
+    this.saveState(); // Save this "all closed" state if viewingStepIndex is managed accordingly.
   }
 
   private loadState(): void {
@@ -262,11 +263,14 @@ export class TreasureHuntService {
       try {
         const savedState: SavedState = JSON.parse(savedStateStr);
 
-        // Restore unlocked steps
         if (
           savedState.unlockedStepIds &&
           Array.isArray(savedState.unlockedStepIds)
         ) {
+          this.steps.forEach((step) => {
+            // Reset all to not unlocked first
+            step.isUnlocked = false;
+          });
           savedState.unlockedStepIds.forEach((id) => {
             const step = this.steps.find((s) => s.id === id);
             if (step) {
@@ -275,37 +279,42 @@ export class TreasureHuntService {
           });
         }
 
-        // Restore indices
-        if (typeof savedState.trackingStepIndex === 'number') {
-          this.trackingStepIndex = savedState.trackingStepIndex;
-        }
-
-        if (typeof savedState.viewingStepIndex === 'number') {
-          this.viewingStepIndex = savedState.viewingStepIndex;
-        }
-
-        // Restore debug mode if present
-        if (typeof savedState.debugMode === 'boolean') {
-          this.debugModeSubject.next(savedState.debugMode);
-        }
-
-        this.updateStepStatus();
+        this.trackingStepIndex =
+          typeof savedState.trackingStepIndex === 'number'
+            ? savedState.trackingStepIndex
+            : 0;
+        this.viewingStepIndex =
+          typeof savedState.viewingStepIndex === 'number'
+            ? savedState.viewingStepIndex
+            : 0;
+        this.debugModeSubject.next(
+          typeof savedState.debugMode === 'boolean'
+            ? savedState.debugMode
+            : false
+        );
       } catch (error) {
         console.error("Erreur lors du chargement de l'état sauvegardé:", error);
-        // Fallback to initial setup
-        this.initializeSteps();
-        this.updateStepStatus();
+        this.trackingStepIndex = 0; // Fallback
+        this.viewingStepIndex = 0; // Fallback
+        this.debugModeSubject.next(false); // Fallback
       }
     }
-    this.updateStepStatus(); // Ensure steps are updated whether loaded or initialized
+    // Ensure the first step is accessible and current if no state was loaded or indices are off
+    if (this.steps.length > 0 && this.trackingStepIndex >= this.steps.length) {
+      this.trackingStepIndex = 0;
+    }
+    if (this.steps.length > 0 && this.viewingStepIndex >= this.steps.length) {
+      this.viewingStepIndex = 0;
+    }
+
+    this.updateStepStatus();
+    this.stepsSubject.next([...this.steps]); // Emit initial state
   }
 
   private saveState(): void {
     if (this.preventImmediateSave) return;
     try {
-      // Create minimal state object
       const savedState: SavedState = {
-        // Save only the IDs of unlocked steps
         unlockedStepIds: this.steps
           .filter((step) => step.isUnlocked)
           .map((step) => step.id),
@@ -313,7 +322,6 @@ export class TreasureHuntService {
         viewingStepIndex: this.viewingStepIndex,
         debugMode: this.debugModeSubject.getValue(),
       };
-
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(savedState));
     } catch (error) {
       console.error("Erreur lors de la sauvegarde de l'état:", error);
@@ -324,9 +332,7 @@ export class TreasureHuntService {
     this.preventImmediateSave = true;
     localStorage.removeItem(this.STORAGE_KEY);
     localStorage.removeItem('has_seen_intro');
-    // Set a flag in sessionStorage (survives page reload)
     sessionStorage.setItem('hunt_just_reset', 'true');
-
     location.reload();
   }
 
@@ -334,15 +340,22 @@ export class TreasureHuntService {
     return this.steps.indexOf(step) === this.trackingStepIndex;
   }
 
-  // Helper method to get the current tracking step
   getCurrentTrackingStep(): Step | null {
-    if (this.trackingStepIndex < this.steps.length) {
+    if (
+      this.trackingStepIndex < this.steps.length &&
+      !this.steps[this.trackingStepIndex].isUnlocked
+    ) {
       return this.steps[this.trackingStepIndex];
     }
-    return null;
+    // If current tracking step is already unlocked or index is out of bounds, find the first uncompleted step
+    const firstUncompleted = this.steps.find((step) => !step.isUnlocked);
+    if (firstUncompleted) {
+      this.trackingStepIndex = this.steps.indexOf(firstUncompleted);
+      return firstUncompleted;
+    }
+    return null; // All steps completed
   }
 
-  // Helper method to get the current active step (the one that's currently visible/selected)
   getCurrentActiveStep(): Step | null {
     const currentStep = this.steps.find((step) => step.isCurrent);
     return currentStep || null;

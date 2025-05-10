@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router'; // Import Router
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
-
 import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
@@ -16,33 +16,87 @@ import { AudioManagerService } from '../../services/audio-manager.service';
 export class TracerComponent implements OnInit, OnDestroy {
   locationPermissionGranted = false;
   currentDistance: number | null = null;
-  currentStep: Step | null = null;
+  currentStep: Step | null = null; // The step currently being targeted by the tracer
+  private idOfStepBeingTraced: number | null = null;
+  private wasStepBeingTracedUnlocked: boolean = false;
+
   currentCoordinates: { lat: number; lng: number } | null = null;
 
   private distanceSubscription: Subscription | null = null;
   private coordinatesSubscription: Subscription | null = null;
+  private stepsSubscription: Subscription | null = null;
   private isAlreadyPlayingProximitySound = false;
 
   constructor(
     public treasureHuntService: TreasureHuntService,
-    private audioManagerService: AudioManagerService
+    private audioManagerService: AudioManagerService,
+    private router: Router // Inject Router
   ) {
     this.checkLocationPermission();
   }
 
   ngOnInit(): void {
-    this.audioManagerService.play('radar.wav', true, true, 500, 0.5);
+    this.audioManagerService.play('radar.wav', true, true, 500, 0.5); // Initialize currentStep and its state for comparison
+
+    this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
+    if (this.currentStep) {
+      this.idOfStepBeingTraced = this.currentStep.id;
+      this.wasStepBeingTracedUnlocked = this.currentStep.isUnlocked;
+    }
+
     this.distanceSubscription = this.treasureHuntService
       .getCurrentDistance()
       .subscribe((distance: number | null) => {
         this.currentDistance = distance;
-        this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
       });
 
     this.coordinatesSubscription = this.treasureHuntService
       .getCurrentCoordinates()
       .subscribe((coordinates: { lat: number; lng: number } | null) => {
         this.currentCoordinates = coordinates;
+      });
+
+    this.stepsSubscription = this.treasureHuntService
+      .getSteps()
+      .subscribe((steps: Step[]) => {
+        const latestStateOfTrackedStep =
+          this.idOfStepBeingTraced !== null
+            ? steps.find((s) => s.id === this.idOfStepBeingTraced)
+            : null;
+
+        if (latestStateOfTrackedStep) {
+          if (
+            latestStateOfTrackedStep.isUnlocked &&
+            !this.wasStepBeingTracedUnlocked
+          ) {
+            // The step we were tracing was just unlocked!
+            // TreasureHuntService.unlockCurrentStep already called onStepOpen for this step.
+            this.router.navigate(['/carte']);
+            // No need to update wasStepBeingTracedUnlocked here as we are navigating away.
+          } else {
+            // Update unlock status for next check if not redirected
+            this.wasStepBeingTracedUnlocked =
+              latestStateOfTrackedStep.isUnlocked;
+          }
+        }
+
+        // Update what step this component is currently showing/tracking towards
+        // This should align with what getCurrentTrackingStep() provides as the *next target*
+        const newTrackingStep =
+          this.treasureHuntService.getCurrentTrackingStep();
+        this.currentStep = newTrackingStep;
+
+        if (newTrackingStep) {
+          if (this.idOfStepBeingTraced !== newTrackingStep.id) {
+            // The service has moved to tracking a new step
+            this.idOfStepBeingTraced = newTrackingStep.id;
+            this.wasStepBeingTracedUnlocked = newTrackingStep.isUnlocked;
+          }
+        } else {
+          // All steps might be completed
+          this.idOfStepBeingTraced = null;
+          this.wasStepBeingTracedUnlocked = false;
+        }
       });
   }
 
@@ -55,6 +109,9 @@ export class TracerComponent implements OnInit, OnDestroy {
     if (this.coordinatesSubscription) {
       this.coordinatesSubscription.unsubscribe();
     }
+    if (this.stepsSubscription) {
+      this.stepsSubscription.unsubscribe();
+    }
   }
 
   checkLocationPermission(): void {
@@ -66,7 +123,9 @@ export class TracerComponent implements OnInit, OnDestroy {
         };
       });
     } else if ('geolocation' in navigator) {
-      this.locationPermissionGranted = true;
+      // Fallback for browsers not supporting navigator.permissions (less common)
+      // We can't reliably check without prompting, so assume not granted until a successful request.
+      this.locationPermissionGranted = false;
     }
   }
 
@@ -76,6 +135,8 @@ export class TracerComponent implements OnInit, OnDestroy {
         () => {
           this.locationPermissionGranted = true;
           alert('Accès à la localisation accordé ! La chasse est lancée !');
+          // Potentially re-initialize or trigger a check in TreasureHuntService if needed
+          this.treasureHuntService.getCurrentTrackingStep(); // Refresh data if permissions were just granted
         },
         () => {
           this.locationPermissionGranted = false;
@@ -110,10 +171,10 @@ export class TracerComponent implements OnInit, OnDestroy {
     const angle = (progress / 100) * 360;
 
     return `conic-gradient(
-      from 0deg,
-      rgba(0, 217, 255, 0.3) ${angle}deg,
-      transparent ${angle}deg
-    )`;
+      from 0deg,
+      rgba(0, 217, 255, 0.3) ${angle}deg,
+      transparent ${angle}deg
+    )`;
   }
 
   getDistanceProgress(): number {
@@ -137,7 +198,6 @@ export class TracerComponent implements OnInit, OnDestroy {
     const isClose =
       this.currentDistance !== null && this.currentDistance <= threshold;
 
-    // Only start playing if we're close AND we weren't already playing
     if (isClose && !this.isAlreadyPlayingProximitySound) {
       this.isAlreadyPlayingProximitySound = true;
       this.audioManagerService.play(
@@ -147,9 +207,7 @@ export class TracerComponent implements OnInit, OnDestroy {
         500,
         0.2
       );
-    }
-    // Only stop playing if we're NOT close AND we were playing
-    else if (!isClose && this.isAlreadyPlayingProximitySound) {
+    } else if (!isClose && this.isAlreadyPlayingProximitySound) {
       this.isAlreadyPlayingProximitySound = false;
       this.audioManagerService.stop('found_something.wav');
     }
