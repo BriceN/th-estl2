@@ -121,7 +121,8 @@
                             </div>
 
                             <div *ngIf="step.cassette">
-                                <app-cassette-player [cassetteFile]="step.cassette"></app-cassette-player>
+                                <app-cassette-player [showBadge]="true"
+                                                     [cassetteFile]="step.cassette"></app-cassette-player>
                             </div>
 
                             <div class="media-container"

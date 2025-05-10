@@ -1,11 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AudioManagerService } from '../../services/audio-manager.service';
+import { CassettePlayerComponent } from '../cassette-player/cassette-player.component';
 
 @Component({
   selector: 'app-intro-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CassettePlayerComponent],
   templateUrl: './intro-modal.component.html',
   styleUrl: './intro-modal.component.scss',
 })

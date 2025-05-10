@@ -11,6 +11,7 @@ import { AudioManagerService } from '../../services/audio-manager.service';
 })
 export class CassettePlayerComponent implements OnInit {
   @Input() cassetteFile: string = '';
+  @Input() showBadge: boolean = false;
   @ViewChild('cassetteVideo') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('cassetteAudio') audioElement!: ElementRef<HTMLAudioElement>;
 
@@ -58,6 +59,7 @@ export class CassettePlayerComponent implements OnInit {
       this.audioElement.nativeElement.pause();
       this.audioElement.nativeElement.currentTime = 0;
     }
+
     this.isPlaying = false;
   }
 
@@ -65,6 +67,7 @@ export class CassettePlayerComponent implements OnInit {
     if (this.videoElement) {
       this.videoElement.nativeElement.pause();
     }
+    this.audioManagerService.resumeAll();
     this.isPlaying = false;
   }
 }
