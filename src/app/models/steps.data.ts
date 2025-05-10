@@ -16,7 +16,7 @@ export const steps: Step[] = [
     isUnlocked: false,
     isAccessible: true,
     isCurrent: true,
-    year: 1996,
+    year: 1995,
     cassette: 'sample.mp3',
   },
   {

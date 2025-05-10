@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  OnDestroy,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
@@ -18,13 +11,16 @@ import { Subscription } from 'rxjs';
   templateUrl: './debug-panel.component.html',
   styleUrl: './debug-panel.component.scss',
 })
-export class DebugPanelComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() currentStep: Step | null = null;
-  @Input() currentCoordinates: { lat: number; lng: number } | null = null;
-  @Input() currentDistance: number | null = null;
+export class DebugPanelComponent implements OnInit, OnDestroy {
+  // Removed @Input() decorators
+  currentStep: Step | null = null;
+  currentCoordinates: { lat: number; lng: number } | null = null;
+  currentDistance: number | null = null;
 
   debugMode = false;
   private debugModeSubscription: Subscription | null = null;
+  private coordinatesSubscription: Subscription | null = null;
+  private distanceSubscription: Subscription | null = null;
 
   constructor(private treasureHuntService: TreasureHuntService) {}
 
@@ -35,16 +31,38 @@ export class DebugPanelComponent implements OnChanges, OnInit, OnDestroy {
       .subscribe((isDebugMode: boolean) => {
         this.debugMode = isDebugMode;
       });
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // React to any input changes if needed
+    // Subscribe to current coordinates
+    this.coordinatesSubscription = this.treasureHuntService
+      .getCurrentCoordinates()
+      .subscribe((coordinates) => {
+        this.currentCoordinates = coordinates;
+      });
+
+    // Subscribe to current distance and update current step accordingly
+    this.distanceSubscription = this.treasureHuntService
+      .getCurrentDistance()
+      .subscribe((distance) => {
+        this.currentDistance = distance;
+        // When distance updates, the relevant step might also have changed
+        this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
+      });
+
+    // Initial fetch for current step, in case distance or coordinates haven't emitted yet
+    // or if the step is relevant even without distance (e.g. at the very start)
+    this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
   }
 
   ngOnDestroy(): void {
-    // Clean up subscription when component is destroyed
+    // Clean up subscriptions when component is destroyed
     if (this.debugModeSubscription) {
       this.debugModeSubscription.unsubscribe();
+    }
+    if (this.coordinatesSubscription) {
+      this.coordinatesSubscription.unsubscribe();
+    }
+    if (this.distanceSubscription) {
+      this.distanceSubscription.unsubscribe();
     }
   }
 

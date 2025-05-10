@@ -5,7 +5,14 @@
   border-radius: 3px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 217, 255, 0.1);
   margin-bottom: 20px;
-  position: relative;
+  position: fixed;
+  top: 120px;
+  z-index: 99;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  max-height: 600px;
+  margin: 0 15px;
 
   &::before {
     content: "";

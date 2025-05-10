@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
-import { DebugPanelComponent } from '../debug-panel/debug-panel.component';
+
 import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-tracer',
   standalone: true,
-  imports: [CommonModule, DebugPanelComponent],
+  imports: [CommonModule],
   templateUrl: './tracer.component.html',
   styleUrl: './tracer.component.scss',
 })

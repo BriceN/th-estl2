@@ -5,11 +5,12 @@ import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
 import { Subscription } from 'rxjs';
 import { AudioManagerService } from '../../services/audio-manager.service';
+import { DebugPanelComponent } from '../debug-panel/debug-panel.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, DebugPanelComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
