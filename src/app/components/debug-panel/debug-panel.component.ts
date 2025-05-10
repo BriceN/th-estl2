@@ -72,7 +72,6 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
 
   simulateLocation(): void {
     this.treasureHuntService.simulateLocationReached();
-    alert("Arrivée à l'emplacement simulée !");
   }
 
   resetHunt(): void {
