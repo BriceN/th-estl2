@@ -12,8 +12,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './debug-panel.component.scss',
 })
 export class DebugPanelComponent implements OnInit, OnDestroy {
-  // Removed @Input() decorators
-  currentStep: Step | null = null;
+  currentStep: Step | null = null; // L'étape activement suivie pour le déverrouillage
+  currentStepForView: Step | null = null; // L'étape actuellement ouverte/vue dans l'UI (peut être différente)
   currentCoordinates: { lat: number; lng: number } | null = null;
   currentDistance: number | null = null;
 
@@ -21,53 +21,52 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   private debugModeSubscription: Subscription | null = null;
   private coordinatesSubscription: Subscription | null = null;
   private distanceSubscription: Subscription | null = null;
+  private stepsSubscription: Subscription | null = null;
 
   constructor(private treasureHuntService: TreasureHuntService) {}
 
   ngOnInit(): void {
-    // Subscribe to debug mode changes
     this.debugModeSubscription = this.treasureHuntService
       .getDebugModeObservable()
       .subscribe((isDebugMode: boolean) => {
         this.debugMode = isDebugMode;
       });
 
-    // Subscribe to current coordinates
     this.coordinatesSubscription = this.treasureHuntService
       .getCurrentCoordinates()
       .subscribe((coordinates) => {
         this.currentCoordinates = coordinates;
       });
 
-    // Subscribe to current distance and update current step accordingly
     this.distanceSubscription = this.treasureHuntService
       .getCurrentDistance()
       .subscribe((distance) => {
         this.currentDistance = distance;
-        // When distance updates, the relevant step might also have changed
-        this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
       });
 
-    // Initial fetch for current step, in case distance or coordinates haven't emitted yet
-    // or if the step is relevant even without distance (e.g. at the very start)
+    // S'abonner aux étapes pour obtenir l'étape de suivi et l'étape de visualisation
+    this.stepsSubscription = this.treasureHuntService
+      .getSteps()
+      .subscribe(() => {
+        this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
+        this.currentStepForView =
+          this.treasureHuntService.getCurrentActiveStep();
+      });
+
+    // Initial fetch
     this.currentStep = this.treasureHuntService.getCurrentTrackingStep();
+    this.currentStepForView = this.treasureHuntService.getCurrentActiveStep();
   }
 
   ngOnDestroy(): void {
-    // Clean up subscriptions when component is destroyed
-    if (this.debugModeSubscription) {
-      this.debugModeSubscription.unsubscribe();
-    }
-    if (this.coordinatesSubscription) {
-      this.coordinatesSubscription.unsubscribe();
-    }
-    if (this.distanceSubscription) {
-      this.distanceSubscription.unsubscribe();
-    }
+    this.debugModeSubscription?.unsubscribe();
+    this.coordinatesSubscription?.unsubscribe();
+    this.distanceSubscription?.unsubscribe();
+    this.stepsSubscription?.unsubscribe();
   }
 
   toggleDebug(): void {
-    this.debugMode = this.treasureHuntService.toggleDebugMode();
+    this.treasureHuntService.toggleDebugMode();
   }
 
   simulateLocation(): void {
@@ -85,16 +84,31 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   }
 
   isCloseToTarget(): boolean {
-    return this.currentDistance !== null && this.currentDistance <= 10;
+    // La distance est calculée par rapport à `currentStep` (l'étape de suivi)
+    return (
+      this.currentDistance !== null &&
+      this.currentDistance <= this.treasureHuntService.getUnlockRadius()
+    );
   }
 
   formatDistance(distance: number | null): string {
     if (distance === null) return 'Inconnue';
-
     if (distance >= 1000) {
       return `${(distance / 1000).toFixed(2)} km`;
     } else {
       return `${Math.round(distance)} m`;
+    }
+  }
+
+  // Nouvelle méthode pour vérifier si l'étape de *suivi* peut être repoussée
+  canCurrentStepBePostponed(): boolean {
+    return this.currentStep ? this.currentStep.canPostpone : false;
+  }
+
+  // Nouvelle méthode pour appeler le service pour repousser l'étape
+  postponeCurrentStep(): void {
+    if (this.canCurrentStepBePostponed()) {
+      this.treasureHuntService.postponeStep();
     }
   }
 }

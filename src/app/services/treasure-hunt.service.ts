@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Step } from '../models/step.model';
-import { steps } from '../models/steps.data';
+import { steps as initialStepsData } from '../models/steps.data'; // Renommé pour clarté
 
 // Interface for minimal state data to save in localStorage
 interface SavedState {
@@ -9,65 +9,64 @@ interface SavedState {
   trackingStepIndex: number;
   viewingStepIndex: number;
   debugMode?: boolean; // Optional debug mode state
+  stepOrder?: number[]; // Optional: IDs of steps in their current order
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class TreasureHuntService {
-  private readonly STORAGE_KEY = 'treasureHuntState';
+  private readonly STORAGE_KEY = 'treasureHuntState_v2'; // Clé mise à jour pour éviter conflits avec ancienne structure
   private readonly LOCATION_CHECK_INTERVAL = 1000; // 1 second
   private readonly UNLOCK_RADIUS = 5; // meters
   private readonly PROXIMITY_RADIUS = 50; // meters - When to show distance indicator
   private preventImmediateSave = false;
 
   private steps: Step[] = [];
-  private trackingStepIndex = 0;
-  private viewingStepIndex = 0;
-  private stepsSubject = new BehaviorSubject<Step[]>([]); // Add BehaviorSubjects for the current distance and coordinates
+  private trackingStepIndex = 0; // Index dans le tableau `this.steps` (potentiellement réordonné)
+  private viewingStepIndex = 0; // Index dans le tableau `this.steps` (potentiellement réordonné)
+  private stepsSubject = new BehaviorSubject<Step[]>([]);
 
   private currentDistanceSubject = new BehaviorSubject<number | null>(null);
   private currentCoordinatesSubject = new BehaviorSubject<{
     lat: number;
     lng: number;
-  } | null>(null); // Debug mode Subject
+  } | null>(null);
 
   private debugModeSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
-    this.initializeSteps();
-    this.loadState(); // Check if we just reset
+    // L'initialisation et le chargement se feront dans loadState pour gérer l'ordre
+    this.loadState();
     if (sessionStorage.getItem('hunt_just_reset') === 'true') {
-      // Clear the flag
-      sessionStorage.removeItem('hunt_just_reset'); // Prevent saving state for a short time after reload
+      sessionStorage.removeItem('hunt_just_reset');
       this.preventImmediateSave = true;
       setTimeout(() => {
         this.preventImmediateSave = false;
-      }, 3000); // Prevent saving for 3 seconds
+      }, 3000);
     }
-
     this.startLocationTracking();
   }
 
   getSteps(): Observable<Step[]> {
     return this.stepsSubject.asObservable();
-  } // Method to get the current distance as an Observable
+  }
 
   getCurrentDistance(): Observable<number | null> {
     return this.currentDistanceSubject.asObservable();
-  } // Method to get the current coordinates as an Observable
+  }
 
   getCurrentCoordinates(): Observable<{ lat: number; lng: number } | null> {
     return this.currentCoordinatesSubject.asObservable();
-  } // Get the proximity radius (for components to use)
+  }
 
   getProximityRadius(): number {
     return this.PROXIMITY_RADIUS;
-  } // Get the unlock radius (for components to use)
+  }
 
   getUnlockRadius(): number {
     return this.UNLOCK_RADIUS;
-  } // Calculate distance to a specific step
+  }
 
   calculateDistanceToStep(stepId: number): number | null {
     const currentCoords = this.currentCoordinatesSubject.getValue();
@@ -82,37 +81,66 @@ export class TreasureHuntService {
       step.coordinates.lat,
       step.coordinates.lng
     );
-  } // Check if a location is in proximity
+  }
+
   isInProximity(distance: number | null): boolean {
     if (distance === null) return false;
     return (
       distance <= this.PROXIMITY_RADIUS || this.debugModeSubject.getValue()
     );
-  } // Debug method to simulate being at the current location
+  }
 
   simulateLocationReached(): void {
-    if (this.trackingStepIndex < this.steps.length) {
-      this.unlockCurrentStep();
+    const currentTrackingStep = this.getCurrentTrackingStep();
+    if (currentTrackingStep && !currentTrackingStep.isUnlocked) {
+      this.unlockStep(currentTrackingStep);
     }
-  } // Toggle debug mode
+  }
 
   toggleDebugMode(): boolean {
     const newDebugMode = !this.debugModeSubject.getValue();
     this.debugModeSubject.next(newDebugMode);
-    this.saveState(); // Save debug mode state
+    this.saveState();
     return newDebugMode;
-  } // Check if debug mode is enabled
+  }
 
   getDebugMode(): boolean {
     return this.debugModeSubject.getValue();
-  } // Get debug mode as an Observable
+  }
 
   getDebugModeObservable(): Observable<boolean> {
     return this.debugModeSubject.asObservable();
   }
 
-  private initializeSteps(): void {
-    this.steps = JSON.parse(JSON.stringify(steps)); // Deep copy to avoid modifying original data
+  private initializeSteps(savedOrderIds?: number[]): void {
+    let baseSteps = JSON.parse(JSON.stringify(initialStepsData)) as Step[];
+
+    if (savedOrderIds && savedOrderIds.length === baseSteps.length) {
+      const reorderedSteps: Step[] = [];
+      const stepMap = new Map(baseSteps.map((step) => [step.id, step]));
+      let allIdsFound = true;
+
+      for (const id of savedOrderIds) {
+        const step = stepMap.get(id);
+        if (step) {
+          reorderedSteps.push(step);
+        } else {
+          allIdsFound = false;
+          break;
+        }
+      }
+      if (allIdsFound) {
+        this.steps = reorderedSteps;
+      } else {
+        // Si l'ordre sauvegardé est invalide (ex: étapes supprimées/ajoutées), on réinitialise à l'ordre par défaut
+        this.steps = baseSteps;
+        console.warn(
+          "L'ordre des étapes sauvegardé est invalide. Réinitialisation à l'ordre par défaut."
+        );
+      }
+    } else {
+      this.steps = baseSteps;
+    }
   }
 
   private startLocationTracking(): void {
@@ -132,31 +160,26 @@ export class TreasureHuntService {
   }
 
   private checkLocation(position: GeolocationPosition): void {
-    // Always update the current coordinates
     this.currentCoordinatesSubject.next({
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     });
 
-    if (this.trackingStepIndex >= this.steps.length) {
-      // All steps are complete, set distance to null
+    const trackingStep = this.getCurrentTrackingStep(); // Utilise la méthode qui retourne l'étape actuelle à suivre
+    if (!trackingStep) {
       this.currentDistanceSubject.next(null);
       return;
     }
 
-    const trackingStep = this.steps[this.trackingStepIndex];
-    if (!trackingStep || !trackingStep.coordinates || trackingStep.isUnlocked) {
-      // Also check if already unlocked
-      // Skip if step or coordinates are undefined, or if step is already unlocked
-      // If the current tracking step is already unlocked, effectively means we are waiting for the next one
-      // or all are done. If all done, trackingStepIndex would be >= steps.length
-      // If current tracking step is unlocked, distance to it is not relevant for unlocking *it*.
-      // Distance should be to the *next* uncompleted tracking step.
-      // This logic is simplified by getCurrentTrackingStep() returning the *next uncompleted* step.
-      // For now, we keep distance to the defined trackingStep.
-      this.currentDistanceSubject.next(
-        this.calculateDistanceToStep(trackingStep.id) ?? null
-      );
+    // Si l'étape à suivre est déjà déverrouillée, la distance n'est pas pertinente pour *cette* étape.
+    // Cependant, l'UI pourrait toujours vouloir afficher la distance à la prochaine étape non déverrouillée.
+    // getCurrentTrackingStep() s'assure que `trackingStep` est la bonne cible.
+    if (trackingStep.isUnlocked) {
+      // Si l'étape actuellement suivie est déjà déverrouillée, cela signifie que nous attendons la suivante
+      // ou que toutes les étapes sont terminées. getCurrentTrackingStep() devrait retourner null si tout est terminé.
+      // Pour l'affichage, on peut mettre la distance à null ou à la distance de la prochaine étape non déverrouillée.
+      // Pour l'instant, on met à null si l'étape ciblée est déjà déverrouillée.
+      this.currentDistanceSubject.next(null); // Ou calculer la distance à la prochaine étape non déverrouillée si nécessaire pour l'UI.
       return;
     }
 
@@ -165,12 +188,12 @@ export class TreasureHuntService {
       position.coords.longitude,
       trackingStep.coordinates.lat,
       trackingStep.coordinates.lng
-    ); // Always update the distance subject
+    );
 
     this.currentDistanceSubject.next(distance);
 
-    if (distance <= this.UNLOCK_RADIUS) {
-      this.unlockCurrentStep();
+    if (distance <= this.UNLOCK_RADIUS && !trackingStep.isUnlocked) {
+      this.unlockStep(trackingStep);
     }
   }
 
@@ -180,7 +203,7 @@ export class TreasureHuntService {
     lat2: number,
     lon2: number
   ): number {
-    const R = 6371e3; // Earth radius in meters
+    const R = 6371e3; // Rayon de la Terre en mètres
     const φ1 = (lat1 * Math.PI) / 180;
     const φ2 = (lat2 * Math.PI) / 180;
     const Δφ = ((lat2 - lat1) * Math.PI) / 180;
@@ -195,125 +218,155 @@ export class TreasureHuntService {
     return distance;
   }
 
-  private unlockCurrentStep(): void {
-    if (this.trackingStepIndex < this.steps.length) {
-      const stepToUnlock = this.steps[this.trackingStepIndex];
+  private unlockStep(stepToUnlock: Step): void {
+    if (!stepToUnlock.isUnlocked) {
+      stepToUnlock.isUnlocked = true;
 
-      if (!stepToUnlock.isUnlocked) {
-        stepToUnlock.isUnlocked = true; // If it's not the last step, advance the *tracking* index for future accessibility checks.
+      // Trouver l'index de l'étape qui vient d'être déverrouillée
+      const unlockedStepIndexInCurrentOrder = this.steps.findIndex(
+        (s) => s.id === stepToUnlock.id
+      );
 
-        if (this.trackingStepIndex < this.steps.length - 1) {
-          this.trackingStepIndex++;
-        } // Set the stepToUnlock as the current one to be viewed. // onStepOpen will handle setting viewingStepIndex, calling updateStepStatus, saving, and emitting.
-
-        this.onStepOpen(stepToUnlock);
+      // Mettre à jour trackingStepIndex pour pointer vers la *prochaine* étape non déverrouillée dans l'ordre actuel
+      let nextTrackingStepFound = false;
+      for (let i = 0; i < this.steps.length; i++) {
+        if (!this.steps[i].isUnlocked) {
+          this.trackingStepIndex = i;
+          nextTrackingStepFound = true;
+          break;
+        }
       }
+      if (!nextTrackingStepFound) {
+        // Toutes les étapes sont déverrouillées
+        this.trackingStepIndex = this.steps.length; // ou une autre valeur pour indiquer la fin
+      }
+
+      // Mettre à jour viewingStepIndex pour afficher l'étape qui vient d'être déverrouillée
+      this.viewingStepIndex = unlockedStepIndexInCurrentOrder;
+
+      this.updateStepStatus();
+      this.saveState();
+      this.stepsSubject.next([...this.steps]);
     }
   }
 
   private updateStepStatus(): void {
+    // `trackingStepIndex` est l'index de la *prochaine* étape à déverrouiller ou `steps.length` si tout est fait.
+    // `viewingStepIndex` est l'index de l'étape actuellement affichée/ouverte dans l'UI.
     this.steps.forEach((step, index) => {
       step.isCurrent = index === this.viewingStepIndex;
-      step.isAccessible = index <= this.trackingStepIndex;
-    }); // No emission here; caller (onStepOpen or loadState) will emit.
+      // Une étape est accessible si elle est déjà déverrouillée,
+      // ou si c'est la prochaine étape à déverrouiller (selon trackingStepIndex),
+      // ou si toutes les étapes précédentes dans l'ordre actuel sont déverrouillées.
+      if (index === 0) {
+        // La première étape est toujours accessible initialement
+        step.isAccessible = true;
+      } else {
+        // L'accessibilité dépend de l'état de déverrouillage de l'étape précédente DANS L'ORDRE ACTUEL
+        step.isAccessible = this.steps[index - 1].isUnlocked;
+      }
+      // Si une étape est déverrouillée, elle doit être accessible
+      if (step.isUnlocked) {
+        step.isAccessible = true;
+      }
+    });
   }
-  /**
-   * Opens a step and closes all others (used for accordion behavior)
-   */
 
   onStepOpen(openedStep: Step): void {
     const stepIndex = this.steps.findIndex((step) => step.id === openedStep.id);
-
-    if (stepIndex !== -1) {
+    if (stepIndex !== -1 && this.steps[stepIndex].isAccessible) {
+      // Vérifier l'accessibilité
       this.viewingStepIndex = stepIndex;
-      this.updateStepStatus(); // Update .isCurrent and .isAccessible flags
+      this.updateStepStatus();
       this.saveState();
-      this.stepsSubject.next([...this.steps]); // Emit the updated steps array
+      this.stepsSubject.next([...this.steps]);
     }
   }
-  /**
-   * Closes all steps (sets isCurrent to false for all steps)
-   * Used for accordion behavior when toggling a step that's already open
-   */
 
   closeAllSteps(): void {
-    // To close all, we effectively set no step as current for viewing.
-    // A common way is to set viewingStepIndex to an invalid index or handle it in updateStepStatus.
-    // For simplicity, let's assume closing means the *current tracking step* (if not last) becomes the default view.
-    // Or, if the desire is truly to close all expanded views without opening another,
-    // then viewingStepIndex could be set to a sentinel like -1 and updateStepStatus would make all isCurrent false.
-    // Given the current structure, if a step is clicked to close it, MapComponent's toggleStep
-    // might decide to set a default open step or truly close all.
-    // The existing `closeAllSteps` just sets `isCurrent = false`.
-    this.steps.forEach((step) => {
-      step.isCurrent = false;
-    });
-    // If we want to ensure viewingStepIndex reflects this "none open" state:
-    // this.viewingStepIndex = -1; // Or some other indicator that nothing is explicitly open.
-    // However, `updateStepStatus` would still make one current if viewingStepIndex is valid.
-    // Let's stick to the direct modification for now as per existing `closeAllSteps` logic.
-
+    // Trouve l'étape de suivi actuelle (la première non déverrouillée)
+    const currentTrackingStep = this.getCurrentTrackingStep();
+    if (currentTrackingStep) {
+      this.viewingStepIndex = this.steps.findIndex(
+        (s) => s.id === currentTrackingStep.id
+      );
+    } else {
+      // Si toutes les étapes sont terminées, on peut pointer vers la dernière ou une valeur par défaut
+      this.viewingStepIndex = this.steps.length > 0 ? this.steps.length - 1 : 0;
+    }
+    this.updateStepStatus();
     this.stepsSubject.next([...this.steps]);
-    this.saveState(); // Save this "all closed" state if viewingStepIndex is managed accordingly.
+    this.saveState();
   }
 
   private loadState(): void {
     const savedStateStr = localStorage.getItem(this.STORAGE_KEY);
+    let savedState: SavedState | null = null;
+
     if (savedStateStr) {
       try {
-        const savedState: SavedState = JSON.parse(savedStateStr);
-
-        if (
-          savedState.unlockedStepIds &&
-          Array.isArray(savedState.unlockedStepIds)
-        ) {
-          this.steps.forEach((step) => {
-            // Reset all to not unlocked first
-            step.isUnlocked = false;
-          });
-          savedState.unlockedStepIds.forEach((id) => {
-            const step = this.steps.find((s) => s.id === id);
-            if (step) {
-              step.isUnlocked = true;
-            }
-          });
-        }
-
-        this.trackingStepIndex =
-          typeof savedState.trackingStepIndex === 'number'
-            ? savedState.trackingStepIndex
-            : 0;
-        this.viewingStepIndex =
-          typeof savedState.viewingStepIndex === 'number'
-            ? savedState.viewingStepIndex
-            : 0;
-        this.debugModeSubject.next(
-          typeof savedState.debugMode === 'boolean'
-            ? savedState.debugMode
-            : false
-        );
+        savedState = JSON.parse(savedStateStr) as SavedState;
       } catch (error) {
         console.error("Erreur lors du chargement de l'état sauvegardé:", error);
-        this.trackingStepIndex = 0; // Fallback
-        this.viewingStepIndex = 0; // Fallback
-        this.debugModeSubject.next(false); // Fallback
+        // Ne pas réinitialiser ici, on utilisera les valeurs par défaut
       }
     }
-    // Ensure the first step is accessible and current if no state was loaded or indices are off
-    if (this.steps.length > 0 && this.trackingStepIndex >= this.steps.length) {
-      this.trackingStepIndex = 0;
-    }
-    if (this.steps.length > 0 && this.viewingStepIndex >= this.steps.length) {
-      this.viewingStepIndex = 0;
+
+    // 1. Initialiser les étapes (potentiellement avec l'ordre sauvegardé)
+    this.initializeSteps(savedState?.stepOrder);
+
+    // 2. Appliquer l'état de déverrouillage
+    if (
+      savedState?.unlockedStepIds &&
+      Array.isArray(savedState.unlockedStepIds)
+    ) {
+      this.steps.forEach((step) => {
+        step.isUnlocked = savedState!.unlockedStepIds.includes(step.id);
+      });
     }
 
+    // 3. Déterminer trackingStepIndex (index de la première étape non déverrouillée dans l'ordre actuel)
+    let firstUncompletedIndex = -1;
+    for (let i = 0; i < this.steps.length; i++) {
+      if (!this.steps[i].isUnlocked) {
+        firstUncompletedIndex = i;
+        break;
+      }
+    }
+    this.trackingStepIndex =
+      firstUncompletedIndex !== -1 ? firstUncompletedIndex : this.steps.length;
+
+    // 4. Déterminer viewingStepIndex
+    // Si un viewingStepIndex valide est sauvegardé et que cette étape existe toujours, l'utiliser.
+    // Sinon, faire en sorte que viewingStepIndex soit égal à trackingStepIndex (si valide) ou à la dernière étape si tout est complété.
+    if (
+      savedState &&
+      typeof savedState.viewingStepIndex === 'number' &&
+      savedState.viewingStepIndex < this.steps.length &&
+      savedState.viewingStepIndex >= 0
+    ) {
+      this.viewingStepIndex = savedState.viewingStepIndex;
+    } else {
+      this.viewingStepIndex =
+        this.trackingStepIndex < this.steps.length
+          ? this.trackingStepIndex
+          : this.steps.length > 0
+          ? this.steps.length - 1
+          : 0;
+    }
+
+    // 5. Charger le mode debug
+    this.debugModeSubject.next(savedState?.debugMode ?? false);
+
+    // 6. Mettre à jour le statut et émettre
     this.updateStepStatus();
-    this.stepsSubject.next([...this.steps]); // Emit initial state
+    this.stepsSubject.next([...this.steps]);
   }
 
   private saveState(): void {
     if (this.preventImmediateSave) return;
     try {
+      const currentStepOrderIds = this.steps.map((step) => step.id);
       const savedState: SavedState = {
         unlockedStepIds: this.steps
           .filter((step) => step.isUnlocked)
@@ -321,6 +374,7 @@ export class TreasureHuntService {
         trackingStepIndex: this.trackingStepIndex,
         viewingStepIndex: this.viewingStepIndex,
         debugMode: this.debugModeSubject.getValue(),
+        stepOrder: currentStepOrderIds,
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(savedState));
     } catch (error) {
@@ -336,28 +390,84 @@ export class TreasureHuntService {
     location.reload();
   }
 
-  isTrackingStep(step: Step): boolean {
-    return this.steps.indexOf(step) === this.trackingStepIndex;
-  }
-
   getCurrentTrackingStep(): Step | null {
-    if (
-      this.trackingStepIndex < this.steps.length &&
-      !this.steps[this.trackingStepIndex].isUnlocked
-    ) {
-      return this.steps[this.trackingStepIndex];
+    // Retourne la première étape non déverrouillée dans l'ordre actuel des étapes.
+    // C'est l'étape que l'utilisateur doit activement chercher.
+    for (let i = 0; i < this.steps.length; i++) {
+      if (!this.steps[i].isUnlocked) {
+        return this.steps[i];
+      }
     }
-    // If current tracking step is already unlocked or index is out of bounds, find the first uncompleted step
-    const firstUncompleted = this.steps.find((step) => !step.isUnlocked);
-    if (firstUncompleted) {
-      this.trackingStepIndex = this.steps.indexOf(firstUncompleted);
-      return firstUncompleted;
-    }
-    return null; // All steps completed
+    return null; // Toutes les étapes sont complétées
   }
 
   getCurrentActiveStep(): Step | null {
-    const currentStep = this.steps.find((step) => step.isCurrent);
-    return currentStep || null;
+    // Retourne l'étape qui est actuellement marquée comme `isCurrent` (celle ouverte dans l'UI)
+    if (
+      this.viewingStepIndex >= 0 &&
+      this.viewingStepIndex < this.steps.length
+    ) {
+      return this.steps[this.viewingStepIndex];
+    }
+    return null;
+  }
+
+  postponeStep(): void {
+    const currentTrackStep = this.getCurrentTrackingStep();
+    if (!currentTrackStep || !currentTrackStep.canPostpone) {
+      console.warn(
+        "L'étape actuelle ne peut pas être repoussée ou n'existe pas."
+      );
+      return;
+    }
+
+    const currentIndex = this.steps.findIndex(
+      (s) => s.id === currentTrackStep.id
+    );
+
+    // S'assurer qu'il y a une étape suivante avec laquelle échanger
+    if (currentIndex === -1 || currentIndex >= this.steps.length - 1) {
+      console.warn(
+        'Impossible de repousser la dernière étape ou étape non trouvée.'
+      );
+      return;
+    }
+
+    const nextStepIndex = currentIndex + 1;
+
+    // Intervertir les étapes dans le tableau `this.steps`
+    [this.steps[currentIndex], this.steps[nextStepIndex]] = [
+      this.steps[nextStepIndex],
+      this.steps[currentIndex],
+    ];
+
+    // Mettre à jour `trackingStepIndex` pour qu'il pointe vers la nouvelle étape "actuelle" (celle qui était à nextStepIndex)
+    // Si l'étape repoussée était celle que nous suivions, le `trackingStepIndex` doit maintenant pointer vers l'étape qui a pris sa place.
+    // Comme `getCurrentTrackingStep()` trouve la première non déverrouillée, et que l'ordre a changé,
+    // nous devons recalculer `trackingStepIndex`.
+    let firstUncompletedIndex = -1;
+    for (let i = 0; i < this.steps.length; i++) {
+      if (!this.steps[i].isUnlocked) {
+        firstUncompletedIndex = i;
+        break;
+      }
+    }
+    this.trackingStepIndex =
+      firstUncompletedIndex !== -1 ? firstUncompletedIndex : this.steps.length;
+
+    // Mettre à jour `viewingStepIndex` pour qu'il suive la nouvelle `trackingStepIndex` (ou l'étape qui est maintenant à la position `currentIndex`)
+    // Après le report, l'étape qui était à `nextStepIndex` est maintenant à `currentIndex`.
+    // C'est cette étape qui devient la nouvelle étape "active" à suivre.
+    this.viewingStepIndex = currentIndex;
+
+    this.updateStepStatus();
+    this.saveState(); // Sauvegarde le nouvel ordre et les index
+    this.stepsSubject.next([...this.steps]);
+    console.log(
+      'Étape repoussée. Nouvel ordre:',
+      this.steps.map((s) => s.id)
+    );
+    console.log('Nouveau trackingStepIndex:', this.trackingStepIndex);
+    console.log('Nouveau viewingStepIndex:', this.viewingStepIndex);
   }
 }

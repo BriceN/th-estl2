@@ -1,4 +1,3 @@
-<!-- Debug Panel -->
 <div class="debug-panel"
      *ngIf="debugMode">
     <h3>Mode Débogage</h3>
@@ -6,9 +5,15 @@
     <div class="debug-info"
          *ngIf="currentStep">
         <div class="info-row">
-            <span class="label">Étape Actuelle :</span>
-            <span class="value">{{ currentStep.title }}</span>
+            <span class="label">Étape Actuelle (Suivi):</span>
+            <span class="value">{{ currentStep.title }} (ID: {{ currentStep.id }})</span>
         </div>
+        <div class="info-row"
+             *ngIf="currentStepForView && currentStepForView.id !== currentStep.id">
+            <span class="label">Étape Actuelle (Vue):</span>
+            <span class="value">{{ currentStepForView.title }} (ID: {{ currentStepForView.id }})</span>
+        </div>
+
 
         <div class="info-row"
              *ngIf="currentCoordinates">
@@ -20,14 +25,14 @@
 
         <div class="info-row"
              *ngIf="currentStep.coordinates">
-            <span class="label">Coordonnées Cibles :</span>
+            <span class="label">Coordonnées Cibles (Suivi):</span>
             <span class="value">
                 {{ currentStep.coordinates.lat.toFixed(6) }}, {{ currentStep.coordinates.lng.toFixed(6) }}
             </span>
         </div>
 
         <div class="info-row">
-            <span class="label">Distance à la Cible :</span>
+            <span class="label">Distance à la Cible (Suivi):</span>
             <span class="value"
                   [ngClass]="{'near-target': isCloseToTarget()}">
                 {{ formatDistance(currentDistance) }}
@@ -44,8 +49,12 @@
                 (click)="resetHunt()">
             Réinitialiser la chasse
         </button>
+        <button class="button info"
+                *ngIf="canCurrentStepBePostponed()"
+                (click)="postponeCurrentStep()">
+            Repousser l'étape ({{currentStep?.title}})
+        </button>
     </div>
-    <!-- Debug Toggle (Footer) -->
     <div class="debug-toggle"
          (click)="toggleDebug()">
         <span>{{ debugMode ? 'Mode Débogage Activé' : '⚙️' }}</span>

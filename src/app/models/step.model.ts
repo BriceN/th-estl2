@@ -16,4 +16,5 @@ export interface Step {
   isCurrent: boolean;
   year: number;
   cassette: string;
+  canPostpone: boolean;
 }

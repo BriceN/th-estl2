@@ -14,6 +14,7 @@ export const steps: Step[] = [
     isUnlocked: false,
     isAccessible: true,
     isCurrent: true,
+    canPostpone: false,
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ export const steps: Step[] = [
     isCurrent: false,
     year: 1999,
     cassette: 'sample.mp3',
+    canPostpone: true,
   },
   {
     id: 3,
@@ -52,5 +54,20 @@ export const steps: Step[] = [
     isCurrent: false,
     year: 2007,
     cassette: 'sample.mp3',
+    canPostpone: false,
+  },
+
+  {
+    id: 4,
+    year: 2001,
+    title: 'Une étape supplémentaire',
+    coordinates: { lat: 49.25, lng: 4.03 },
+    hint: "Un indice pour l'étape 4.",
+    unlockedContent: "Contenu débloqué de l'étape 4.",
+    cassette: 'sample.mp3',
+    isUnlocked: false,
+    isAccessible: false,
+    isCurrent: false,
+    canPostpone: false,
   },
 ];
