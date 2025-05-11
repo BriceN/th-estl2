@@ -3,26 +3,21 @@ import { Step } from './step.model';
 export const steps: Step[] = [
   {
     id: 1,
+    year: 1995,
     title: 'Il était une fois...',
-    subtitle: 'Commencez au point de départ',
-    coordinates: { lat: 49.2589210827042, lng: 4.037472846877561 },
-    hint: 'Cherchez la statue qui porte le monde sur ses épaules',
+    coordinates: { lat: 49.25631, lng: 4.03994 },
+    hint: "Notre pèlerinage commence là où notre fil vital s'est noué un mois avant l'heure, dans ce havre de nouveaux départs baptisé du nom d'un apôtre",
     lockedImage:
-      'https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    unlockedContent:
-      'Félicitations pour avoir trouvé le premier indice ! Votre prochaine destination vous attend.',
-    unlockedImage:
-      'https://images.unsplash.com/photo-1496588152823-86ff7695e68f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+      'https://www.amisdejesus.net/wp-content/uploads/2017/02/saint-andre.jpg',
+    unlockedContent: 'Félicitations pour avoir trouvé le premier lieu !',
+    cassette: '1.ogg',
     isUnlocked: false,
     isAccessible: true,
     isCurrent: true,
-    year: 1995,
-    cassette: '1.ogg',
   },
   {
     id: 2,
     title: 'Constance est mère de sureté',
-    subtitle: 'Trouvez le passage secret',
     coordinates: { lat: 49.259205055989895, lng: 4.0359924197744945 },
     hint: 'Entre les vieux chênes, un passage se révèle',
     lockedImage:
@@ -40,7 +35,6 @@ export const steps: Step[] = [
   {
     id: 3,
     title: 'Le pot pourri',
-    subtitle: 'Découvrez le trésor perdu',
     coordinates: { lat: 49.2599726573367, lng: 4.031611159574977 },
     hint: "Là où l'eau rencontre la pierre, l'artefact attend",
     lockedImage:

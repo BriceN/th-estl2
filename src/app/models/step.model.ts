@@ -4,7 +4,6 @@
 export interface Step {
   id: number;
   title: string;
-  subtitle: string;
   coordinates: { lat: number; lng: number };
   hint: string;
   lockedImage?: string;
