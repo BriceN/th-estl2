@@ -7,11 +7,17 @@ import { Step } from '../../models/step.model';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { StepIndicatorComponent } from '../step-indicator/step-indicator.component';
 import { AudioManagerService } from '../../services/audio-manager.service';
+import { FinalStepComponent } from '../final-step/final-step.component';
 
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, StepIndicatorComponent, CassettePlayerComponent],
+  imports: [
+    CommonModule,
+    StepIndicatorComponent,
+    CassettePlayerComponent,
+    FinalStepComponent,
+  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -65,5 +71,10 @@ export class MapComponent implements OnInit, OnDestroy {
       const nextStep = this.steps[currentIndex + 1];
       this.treasureHuntService.onStepOpen(nextStep);
     }
+  }
+
+  // Check if this is the last step
+  isLastStep(index: number): boolean {
+    return index === this.steps.length - 1;
   }
 }

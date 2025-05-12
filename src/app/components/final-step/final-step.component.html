@@ -1,0 +1,38 @@
+<div class="final-step-container">
+    <div class="time-panel"
+         *ngIf="!midnightPassed">
+        <div class="panel-title">Patience</div>
+        <div class="countdown-timer">
+            <div class="time-segment">
+                <div class="time-value">{{hours}}</div>
+                <div class="time-label">Heures</div>
+            </div>
+            <div class="time-separator">:</div>
+            <div class="time-segment">
+                <div class="time-value">{{minutes}}</div>
+                <div class="time-label">Minutes</div>
+            </div>
+            <div class="time-separator">:</div>
+            <div class="time-segment">
+                <div class="time-value">{{seconds}}</div>
+                <div class="time-label">Secondes</div>
+            </div>
+        </div>
+        <div class="midnight-message">Le voyage se terminera bientôt...</div>
+    </div>
+
+    <div class="completion-panel"
+         *ngIf="midnightPassed">
+        <div class="panel-title">L'heure est venue</div>
+        <div class="completion-message">Votre périple à travers le temps est terminé.</div>
+        <button class="finish-button"
+                (click)="finishPilgrimage()">
+            <span class="button-text">Terminer le pélerinage</span>
+            <div class="button-glow"></div>
+        </button>
+    </div>
+</div>
+
+<div id="final-step-modal">
+    <!-- todo add threejs cube component -->
+</div>

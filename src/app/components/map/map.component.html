@@ -148,9 +148,22 @@
                                     <span class="button-icon">→</span>
                                 </button>
                             </div>
+
+                            <div *ngIf="isLastStep(i) && step.isUnlocked">
+                                <app-final-step></app-final-step>
+                            </div>
+
+
+
                         </div>
+
+
+
                     </div>
                 </div>
+
+
+
             </div>
         </div>
     </div>
