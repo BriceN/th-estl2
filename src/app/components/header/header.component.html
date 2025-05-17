@@ -21,12 +21,12 @@
 
     <div class="center">
         <div class="circle-container"
-             *ngIf="trackingStep"
              (click)="onCircleContainerClick()">
             <div class="outer-ring"></div>
             <div class="mid-ring"></div>
             <div class="circle">
-                <div class="circle-content">
+                <div class="circle-content"
+                     *ngIf="trackingStep">
                     <div class="step-label">Année</div>
                     <div class="step-number">{{ trackingStep.year }}</div>
                 </div>

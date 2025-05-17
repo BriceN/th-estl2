@@ -40,7 +40,7 @@ export class IntroModalComponent implements OnInit {
   startUnlockAnimation() {
     if (this.isAnimating) return;
     const self = this;
-    navigator.vibrate(200);
+    navigator.vibrate(1000);
     this.audioManagerService
       .playMultiple(['servo.wav', 'tension.wav'])
       .then(function () {
@@ -57,7 +57,7 @@ export class IntroModalComponent implements OnInit {
       this.showFirstLayer = false;
       this.showSecondLayer = true;
       this.isAnimating = false;
-      navigator.vibrate(1000);
+      navigator.vibrate(2000);
     }, 9000);
   }
 
