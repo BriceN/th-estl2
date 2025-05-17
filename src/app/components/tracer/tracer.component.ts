@@ -200,6 +200,7 @@ export class TracerComponent implements OnInit, OnDestroy {
 
     if (isClose && !this.isAlreadyPlayingProximitySound) {
       this.isAlreadyPlayingProximitySound = true;
+      navigator.vibrate(500);
       this.audioManagerService.play(
         'found_something.wav',
         true,
