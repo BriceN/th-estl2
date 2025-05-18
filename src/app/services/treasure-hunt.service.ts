@@ -34,7 +34,8 @@ export class TreasureHuntService {
   } | null>(null);
 
   private debugModeSubject = new BehaviorSubject<boolean>(false);
-
+  // New property for ending modal
+  private showEndingModalSubject = new BehaviorSubject<boolean>(false);
   constructor() {
     // L'initialisation et le chargement se feront dans loadState pour gérer l'ordre
     this.loadState();
@@ -66,6 +67,19 @@ export class TreasureHuntService {
 
   getUnlockRadius(): number {
     return this.UNLOCK_RADIUS;
+  }
+
+  // New methods for ending modal
+  getShowEndingModal(): Observable<boolean> {
+    return this.showEndingModalSubject.asObservable();
+  }
+
+  openEndingModal(): void {
+    this.showEndingModalSubject.next(true);
+  }
+
+  closeEndingModal(): void {
+    this.showEndingModalSubject.next(false);
   }
 
   calculateDistanceToStep(stepId: number): number | null {

@@ -1,0 +1,42 @@
+<div class="ending-modal-overlay"
+     *ngIf="showModal"
+     (click)="onOverlayClick($event)">
+    <div class="ending-modal-container"
+         (click)="$event.stopPropagation()">
+
+        <!-- Cube State -->
+        <div *ngIf="currentState === 'cube'"
+             class="modal-content cube-state">
+            <app-three-cube (cubeInteracted)="onCubeInteracted()"></app-three-cube>
+        </div>
+
+        <!-- Cassette State -->
+        <div *ngIf="currentState === 'cassette'"
+             class="modal-content cassette-state">
+            <app-final-cassette (cassetteEnded)="onCassetteEnded()"></app-final-cassette>
+        </div>
+
+        <!-- Credits State -->
+        <div *ngIf="currentState === 'credits'"
+             class="modal-content credits-state">
+            <app-credits></app-credits>
+            <button class="close-button"
+                    (click)="closeModal()">
+                <span>Fermer</span>
+            </button>
+        </div>
+
+        <!-- Decorative elements -->
+        <div class="modal-decorations">
+            <div class="decoration-line top"></div>
+            <div class="decoration-line bottom"></div>
+            <div class="decoration-line left"></div>
+            <div class="decoration-line right"></div>
+
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration top-right"></div>
+            <div class="corner-decoration bottom-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+        </div>
+    </div>
+</div>

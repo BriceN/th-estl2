@@ -1,4 +1,12 @@
-import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AudioManagerService } from '../../services/audio-manager.service';
 
@@ -14,6 +22,9 @@ export class CassettePlayerComponent implements OnInit {
   @Input() showBadge: boolean = false;
   @ViewChild('cassetteVideo') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('cassetteAudio') audioElement!: ElementRef<HTMLAudioElement>;
+
+  // New output event
+  @Output() audioEnded = new EventEmitter<void>();
 
   isPlaying: boolean = false;
 
@@ -69,5 +80,8 @@ export class CassettePlayerComponent implements OnInit {
     }
     this.audioManagerService.resumeAll();
     this.isPlaying = false;
+
+    // Emit the new event
+    this.audioEnded.emit();
   }
 }

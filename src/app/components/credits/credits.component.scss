@@ -1,0 +1,132 @@
+.credits-container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  overflow-y: auto;
+  padding: 40px 20px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 217, 255, 0.05) 0%,
+    transparent 70%
+  );
+  background: #03000e;
+  z-index: 999;
+}
+
+.credits-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+.credits-title {
+  font-size: 48px;
+  color: var(--accent-green);
+  margin-bottom: 40px;
+  font-family: "Orbitron", sans-serif;
+  text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+.credits-section {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: rgba(21, 34, 56, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+.credits-section h2 {
+  color: var(--text-secondary);
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-family: "Orbitron", sans-serif;
+}
+
+.credits-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 0;
+}
+
+.credits-list {
+  text-align: left;
+}
+
+.credit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.credit-item:last-child {
+  border-bottom: none;
+}
+
+.credit-role {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.credit-name {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.final-message {
+  font-size: 20px;
+  color: var(--accent-purple);
+  font-style: italic;
+  text-shadow: 0 0 10px rgba(214, 68, 255, 0.5);
+  margin: 0;
+}
+
+.thank-you {
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titleGlow {
+  0% {
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 30px rgba(0, 255, 157, 0.8),
+      0 0 40px rgba(0, 255, 157, 0.6);
+  }
+}
+
+@media (max-width: 768px) {
+  .credits-title {
+    font-size: 36px;
+  }
+
+  .credits-section h2 {
+    font-size: 20px;
+  }
+
+  .credit-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 5px;
+  }
+}

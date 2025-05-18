@@ -49,7 +49,7 @@ export class FinalStepComponent implements OnInit, OnDestroy {
   private updateRemainingTime(): void {
     const now = new Date();
     const midnight = new Date();
-    midnight.setHours(24, 0, 0, 0); // Set to midnight tonight
+    midnight.setHours(10, 0, 0, 0); // Set to midnight tonight
 
     // Calculate time until midnight
     let timeRemaining = midnight.getTime() - now.getTime();
@@ -86,9 +86,7 @@ export class FinalStepComponent implements OnInit, OnDestroy {
 
   finishPilgrimage(): void {
     this.audioManagerService.play('click.wav', false, false, 0, 0.2);
-    // Here you could implement any final actions needed to complete the treasure hunt
-    alert('Félicitations ! Vous avez terminé le pèlerinage temporel !');
-
-    // todo show modale
+    // Open the ending modal instead of showing an alert
+    this.treasureHuntService.openEndingModal();
   }
 }

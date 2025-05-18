@@ -1,0 +1,17 @@
+<div class="final-cassette-container">
+    <div class="final-cassette-content">
+        <h2 class="final-title">Message Final</h2>
+        <div class="final-decoration"></div>
+
+        <div class="cassette-wrapper">
+            <app-cassette-player [cassetteFile]="'close.wav'"
+                                 [showBadge]="true"
+                                 (audioEnded)="onFinalCassetteEnded()">
+            </app-cassette-player>
+        </div>
+
+        <p class="final-subtitle">
+            L'ultime transmission de votre voyage temporel
+        </p>
+    </div>
+</div>
