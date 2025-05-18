@@ -99,10 +99,25 @@
                         <div *ngIf="step.isUnlocked"
                              class="unlocked-content">
 
-                            <div class="unlock-badge">
-                                <div class="badge-icon">🏆</div>
-                                <div class="badge-text">Étape Réussie</div>
+                            <div class="unlock-title">
+                                <div class="unlock-badge">
+                                    <div class="badge-icon">🏆</div>
+                                    <div class="badge-text">Étape Réussie</div>
+                                </div>
+                                <div class="duration-badge"
+                                     *ngIf="hasStepDuration(step)">
+
+                                    <div class="duration-text">
+
+                                        <span class="duration-value"> {{ getStepDuration(step) }}</span>
+                                    </div>
+                                </div>
                             </div>
+
+
+
+
+
 
                             <div class="content-text">
                                 <p>{{ step.unlockedContent }}</p>
@@ -153,16 +168,10 @@
                                 <app-final-step></app-final-step>
                             </div>
 
-
-
                         </div>
-
-
 
                     </div>
                 </div>
-
-
 
             </div>
         </div>

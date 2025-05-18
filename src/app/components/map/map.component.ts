@@ -77,4 +77,22 @@ export class MapComponent implements OnInit, OnDestroy {
   isLastStep(index: number): boolean {
     return index === this.steps.length - 1;
   }
+
+  // Get formatted duration for a completed step
+  getStepDuration(step: Step): string {
+    if (!step.isUnlocked) return '';
+
+    const duration = this.treasureHuntService.getStepDuration(step.id);
+    if (duration !== undefined) {
+      return this.treasureHuntService.formatDuration(duration);
+    }
+    return 'Temps inconnu';
+  }
+
+  // Check if step has valid duration data
+  hasStepDuration(step: Step): boolean {
+    if (!step.isUnlocked) return false;
+    const duration = this.treasureHuntService.getStepDuration(step.id);
+    return duration !== undefined;
+  }
 }

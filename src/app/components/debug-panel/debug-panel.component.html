@@ -2,19 +2,55 @@
      *ngIf="debugMode">
     <h3>Mode Débogage</h3>
 
-    <div class="debug-info"
-         *ngIf="currentStep">
+    <!-- Progress Section -->
+    <div class="debug-section progress-section">
+        <h4>Progression</h4>
+        <div class="progress-info">
+            <div class="info-row">
+                <span class="label">Progression :</span>
+                <span class="value progress-value">
+                    {{ completedSteps }} / {{ totalSteps }} étapes ({{ progressPercentage }}%)
+                </span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"
+                     [style.width.%]="progressPercentage"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Tracking Section -->
+    <div class="debug-section time-section">
+        <h4>Temps de Parcours</h4>
         <div class="info-row">
-            <span class="label">Étape Actuelle (Suivi):</span>
+            <span class="label">Temps Total :</span>
+            <span class="value time-value">{{ totalElapsedTime }}</span>
+        </div>
+        <div class="info-row"
+             *ngIf="currentStep">
+            <span class="label">Temps Étape Actuelle :</span>
+            <span class="value time-value">{{ currentStepElapsedTime }}</span>
+        </div>
+    </div>
+
+    <!-- Step Information Section -->
+    <div class="debug-section step-section"
+         *ngIf="currentStep">
+        <h4>Étape Actuelle (Suivi)</h4>
+        <div class="info-row">
+            <span class="label">Titre :</span>
             <span class="value">{{ currentStep.title }} (ID: {{ currentStep.id }})</span>
         </div>
         <div class="info-row"
              *ngIf="currentStepForView && currentStepForView.id !== currentStep.id">
-            <span class="label">Étape Actuelle (Vue):</span>
+            <span class="label">Étape Affichée :</span>
             <span class="value">{{ currentStepForView.title }} (ID: {{ currentStepForView.id }})</span>
         </div>
+    </div>
 
-
+    <!-- Location Section -->
+    <div class="debug-section location-section">
+        <h4>Géolocalisation</h4>
         <div class="info-row"
              *ngIf="currentCoordinates">
             <span class="label">Vos Coordonnées :</span>
@@ -24,15 +60,15 @@
         </div>
 
         <div class="info-row"
-             *ngIf="currentStep.coordinates">
-            <span class="label">Coordonnées Cibles (Suivi):</span>
+             *ngIf="currentStep && currentStep.coordinates">
+            <span class="label">Coordonnées Cibles :</span>
             <span class="value">
                 {{ currentStep.coordinates.lat.toFixed(6) }}, {{ currentStep.coordinates.lng.toFixed(6) }}
             </span>
         </div>
 
         <div class="info-row">
-            <span class="label">Distance à la Cible (Suivi):</span>
+            <span class="label">Distance à la Cible :</span>
             <span class="value"
                   [ngClass]="{'near-target': isCloseToTarget()}">
                 {{ formatDistance(currentDistance) }}
@@ -40,21 +76,26 @@
         </div>
     </div>
 
-    <div class="debug-actions">
-        <button class="button accent"
-                (click)="simulateLocation()">
-            Simuler l'arrivée
-        </button>
-        <button class="button warning"
-                (click)="resetHunt()">
-            Réinitialiser la chasse
-        </button>
-        <button class="button info"
-                *ngIf="canCurrentStepBePostponed()"
-                (click)="postponeCurrentStep()">
-            Repousser l'étape ({{currentStep?.title}})
-        </button>
+    <!-- Actions Section -->
+    <div class="debug-section actions-section">
+        <h4>Actions</h4>
+        <div class="debug-actions">
+            <button class="button accent"
+                    (click)="simulateLocation()">
+                Simuler l'arrivée
+            </button>
+            <button class="button warning"
+                    (click)="resetHunt()">
+                Réinitialiser la chasse
+            </button>
+            <button class="button info"
+                    *ngIf="canCurrentStepBePostponed()"
+                    (click)="postponeCurrentStep()">
+                Repousser l'étape
+            </button>
+        </div>
     </div>
+
     <div class="debug-toggle"
          (click)="toggleDebug()">
         <span>{{ debugMode ? 'Mode Débogage Activé' : '⚙️' }}</span>
