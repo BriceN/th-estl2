@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-credits',
@@ -7,4 +8,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './credits.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreditsComponent { }
+export class CreditsComponent implements OnInit {
+  constructor(private audioManagerService: AudioManagerService) {}
+  ngOnInit(): void {
+    this.audioManagerService.stopAll();
+    this.audioManagerService.play('OuterWilds.mp3', true, true, 1000, 0.5);
+  }
+}

@@ -1,9 +1,29 @@
-<div class="cube-container">
-    <div class="cube-placeholder"
-         (click)="onCubeClick()">
-        <div class="cube-content">
-            <div class="cube-icon">📦</div>
-            <p class="cube-instruction">Cliquez sur le cube pour continuer</p>
+<div class="cube-scene-container">
+    <div class="cube-canvas"
+         #cubeContainer></div>
+
+    <!-- Optional overlay instructions that fade out -->
+    <!-- <div class="scene-overlay">
+        <div class="instruction-text">
+            <span class="glow-text">Trouve le bouton vert</span>
         </div>
+    </div> -->
+
+    <!-- Decorative UI elements around the scene -->
+    <div class="scene-decorations">
+        <div class="decoration-line top-left"></div>
+        <div class="decoration-line top-right"></div>
+        <div class="decoration-line bottom-left"></div>
+        <div class="decoration-line bottom-right"></div>
+
+        <div class="corner-accent top-left"></div>
+        <div class="corner-accent top-right"></div>
+        <div class="corner-accent bottom-left"></div>
+        <div class="corner-accent bottom-right"></div>
+    </div>
+
+    <!-- Scanning effect overlay -->
+    <div class="scan-overlay">
+        <div class="scan-line"></div>
     </div>
 </div>

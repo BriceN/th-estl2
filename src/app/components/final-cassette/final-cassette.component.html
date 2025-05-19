@@ -8,6 +8,10 @@
                                  [showBadge]="false"
                                  (audioEnded)="onFinalCassetteEnded()">
             </app-cassette-player>
+            <app-cassette-player [cassetteFile]="'close.wav'"
+                                 [showBadge]="false"
+                                 (audioEnded)="onFinalCassetteEnded()">
+            </app-cassette-player>
         </div>
 
         <p class="final-subtitle">
