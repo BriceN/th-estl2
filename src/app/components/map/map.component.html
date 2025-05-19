@@ -1,3 +1,4 @@
+<!-- map.component.html -->
 <div class="carte-container">
     <div class="holo-panel">
         <!-- Decorative Elements -->
@@ -21,9 +22,10 @@
         <!-- Step Indicator Component -->
         <app-step-indicator [steps]="steps"></app-step-indicator>
 
-        <!-- Liste des étapes -->
-        <div class="timeline">
-            <div *ngFor="let step of steps; let i = index"
+        <!-- Liste des étapes with performance optimization -->
+        <div class="timeline"
+             [@staggeredFadeIn]="steps.length">
+            <div *ngFor="let step of steps; let i = index; trackBy: trackStepById"
                  class="timeline-item"
                  [class.unlocked]="step.isUnlocked"
                  [class.current]="step.isCurrent"
@@ -54,8 +56,10 @@
                     </div>
                 </div>
 
-                <div class="timeline-content"
-                     [class.hidden]="!step.isCurrent">
+                <!-- Use *ngIf with animation for performance -->
+                <div *ngIf="step.isCurrent && shouldRenderStepContent(step)"
+                     @slideInOut
+                     class="timeline-content">
 
                     <!-- Conteneur amélioré -->
                     <div class="content-panel">
@@ -75,7 +79,8 @@
                                 <div class="hologram-frame">
                                     <div class="hologram-scan-line"></div>
                                     <img [src]="step.lockedImage"
-                                         alt="Image d'indice">
+                                         alt="Image d'indice"
+                                         loading="lazy">
                                     <div class="hologram-glow"></div>
                                 </div>
                             </div>
@@ -84,7 +89,8 @@
                                  *ngIf="step.lockedVideo">
                                 <div class="video-frame">
                                     <video [src]="step.lockedVideo"
-                                           controls></video>
+                                           controls
+                                           preload="none"></video>
                                     <div class="video-decorations">
                                         <div class="corner top-left"></div>
                                         <div class="corner top-right"></div>
@@ -106,18 +112,11 @@
                                 </div>
                                 <div class="duration-badge"
                                      *ngIf="hasStepDuration(step)">
-
                                     <div class="duration-text">
-
-                                        <span class="duration-value"> {{ getStepDuration(step) }}</span>
+                                        <span class="duration-value">{{ getStepDuration(step) }}</span>
                                     </div>
                                 </div>
                             </div>
-
-
-
-
-
 
                             <div class="content-text">
                                 <p>{{ step.unlockedContent }}</p>
@@ -127,7 +126,8 @@
                                  *ngIf="step.unlockedImage">
                                 <div class="image-frame">
                                     <img [src]="step.unlockedImage"
-                                         alt="Image du contenu débloqué">
+                                         alt="Image du contenu débloqué"
+                                         loading="lazy">
                                     <div class="sparkle top-left"></div>
                                     <div class="sparkle top-right"></div>
                                     <div class="sparkle bottom-left"></div>
@@ -144,7 +144,8 @@
                                  *ngIf="step.unlockedVideo">
                                 <div class="video-frame unlocked">
                                     <video [src]="step.unlockedVideo"
-                                           controls></video>
+                                           controls
+                                           preload="none"></video>
                                     <div class="video-decorations">
                                         <div class="corner top-left"></div>
                                         <div class="corner top-right"></div>
