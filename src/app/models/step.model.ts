@@ -15,7 +15,7 @@ export interface Step {
   isAccessible: boolean;
   isCurrent: boolean;
   year: number;
-  cassette: string;
+  cassette?: string;
   canPostpone: boolean;
   startTime?: number; // Timestamp when step becomes active/current
   endTime?: number; // Timestamp when step is completed/unlocked
