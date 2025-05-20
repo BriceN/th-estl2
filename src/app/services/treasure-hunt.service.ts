@@ -435,6 +435,20 @@ export class TreasureHuntService {
     this.saveState();
   }
 
+  public setCurrentStepById(stepId: number): void {
+    const stepIndex = this.steps.findIndex(step => step.id === stepId);
+
+    if (stepIndex !== -1) {
+      this.trackingStepIndex = stepIndex;
+      this.viewingStepIndex = stepIndex;
+      this.updateStepStatus();
+      this.saveState();
+      this.stepsSubject.next([...this.steps]);
+    } else {
+      console.warn(`Step with ID ${stepId} not found.`);
+    }
+  }
+
   private loadState(): void {
     const savedStateStr = localStorage.getItem(this.STORAGE_KEY);
     let savedState: SavedState | null = null;

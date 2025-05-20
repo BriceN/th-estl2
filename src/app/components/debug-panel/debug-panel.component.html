@@ -96,6 +96,21 @@
         </div>
     </div>
 
+    <!-- Postponable Steps Section -->
+    <div class="debug-section postponable-steps-section"
+         *ngIf="(getPostponableSteps() | async) as postponableSteps">
+        <h4>Étapes Reportables</h4>
+        <ul *ngIf="postponableSteps.length > 0; else noPostponableSteps">
+            <li *ngFor="let step of postponableSteps"
+                (click)="onPostponableStepClick(step)">
+                {{ step.title }} (ID: {{ step.id }})
+            </li>
+        </ul>
+        <ng-template #noPostponableSteps>
+            <p>Aucune étape ne peut être reportée pour le moment.</p>
+        </ng-template>
+    </div>
+
     <div class="debug-toggle"
          (click)="toggleDebug()">
         <span>{{ debugMode ? 'Mode Débogage Activé' : '⚙️' }}</span>

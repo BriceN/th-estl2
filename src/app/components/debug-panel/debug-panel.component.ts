@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-debug-panel',
@@ -142,6 +143,18 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   postponeCurrentStep(): void {
     if (this.canCurrentStepBePostponed()) {
       this.treasureHuntService.postponeStep();
+    }
+  }
+
+  getPostponableSteps(): Observable<Step[]> {
+    return this.treasureHuntService.getSteps().pipe(
+      map(steps => steps.filter(step => step.canPostpone))
+    );
+  }
+
+  onPostponableStepClick(step: Step): void {
+    if (confirm("Êtes-vous sûr de vouloir faire de cette étape l'étape actuelle ?")) {
+      this.treasureHuntService.setCurrentStepById(step.id);
     }
   }
 }
