@@ -76,6 +76,32 @@
         </div>
     </div>
 
+    <!-- Postponable Steps Section -->
+    <div class="debug-section postponable-steps-section"
+         *ngIf="debugMode && postponableSteps.length > 0">
+        <h4>Étapes disponibles pour interversion</h4>
+        <div class="hint-text">
+            Cliquez sur une étape pour l'intervertir avec l'étape courante
+        </div>
+        <div class="postponable-steps">
+            <div class="step-item"
+                 *ngFor="let step of postponableSteps"
+                 (click)="makeStepCurrent(step)"
+                 [class.current]="currentStep && step.id === currentStep.id">
+                <div class="step-title">
+                    {{ step.title }}
+                    <span class="step-year">({{ step.year }})</span>
+                </div>
+                <div class="step-action">
+                    <span class="action-icon"
+                          *ngIf="currentStep && step.id !== currentStep.id">⇝</span>
+                    <span class="current-indicator"
+                          *ngIf="currentStep && step.id === currentStep.id">Actuelle</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Actions Section -->
     <div class="debug-section actions-section">
         <h4>Actions</h4>

@@ -16,6 +16,7 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   currentStepForView: Step | null = null;
   currentCoordinates: { lat: number; lng: number } | null = null;
   currentDistance: number | null = null;
+  postponableSteps: Step[] = [];
 
   // Time tracking properties
   currentStepElapsedTime: string = '0s';
@@ -59,6 +60,7 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
         this.currentStepForView =
           this.treasureHuntService.getCurrentActiveStep();
         this.updateTimeData();
+        this.updatePostponableSteps(); // Add this line
       });
 
     // Update time data every second
@@ -137,6 +139,31 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
 
   canCurrentStepBePostponed(): boolean {
     return this.currentStep ? this.currentStep.canPostpone : false;
+  }
+
+  // Add this method to get postponable steps
+  updatePostponableSteps(): void {
+    // Get all postponable steps
+    const allPostponableSteps = this.treasureHuntService.getPostponableSteps();
+
+    // Display all postponable steps
+    this.postponableSteps = allPostponableSteps;
+  }
+
+  // Add this method to handle step selection
+  makeStepCurrent(step: Step): void {
+    if (this.currentStep && step.id === this.currentStep.id) {
+      // This is already the current step, nothing to do
+      return;
+    }
+
+    if (
+      confirm(
+        `Voulez-vous faire de "${step.title}" l'étape courante ? L'étape actuelle sera placée juste après.`
+      )
+    ) {
+      this.treasureHuntService.makeStepCurrent(step.id);
+    }
   }
 
   postponeCurrentStep(): void {

@@ -572,6 +572,69 @@ export class TreasureHuntService {
     return null;
   }
 
+  // Method to get all steps that can be postponed
+  getPostponableSteps(): Step[] {
+    return this.steps.filter((step) => step.canPostpone);
+  }
+
+  // Method to make a specific step the current step
+  makeStepCurrent(stepId: number): void {
+    // Find the step to make current
+    const stepToMakeCurrent = this.steps.find((step) => step.id === stepId);
+
+    if (!stepToMakeCurrent || !stepToMakeCurrent.canPostpone) {
+      console.warn('Step not found or cannot be made current');
+      return;
+    }
+
+    // Get the current tracking step
+    const currentTrackingStep = this.getCurrentTrackingStep();
+    if (!currentTrackingStep) {
+      console.warn('No current tracking step to swap');
+      return;
+    }
+
+    // Make a copy of the steps array for manipulation
+    const stepsCopy = [...this.steps];
+
+    // Remove both steps from the array
+    const stepsWithoutTarget = stepsCopy.filter(
+      (s) => s.id !== stepId && s.id !== currentTrackingStep.id
+    );
+
+    // Create a new array with the target step first, followed by the current tracking step,
+    // and then all other steps in their original order
+    const stepIndex = stepsCopy.findIndex((s) => s.id === stepId);
+    const currentIndex = stepsCopy.findIndex(
+      (s) => s.id === currentTrackingStep.id
+    );
+
+    // Find where to insert the two steps
+    let insertIndex = Math.min(stepIndex, currentIndex);
+
+    // Create the new steps array
+    this.steps = [
+      ...stepsWithoutTarget.slice(0, insertIndex),
+      stepToMakeCurrent,
+      currentTrackingStep,
+      ...stepsWithoutTarget.slice(insertIndex),
+    ];
+
+    // Update the tracking step index and view step index
+    this.trackingStepIndex = insertIndex;
+    this.viewingStepIndex = insertIndex;
+
+    // Mark new current step as started if it wasn't already
+    if (!stepToMakeCurrent.startTime) {
+      this.markStepAsStarted(stepToMakeCurrent);
+    }
+
+    // Update status and save state
+    this.updateStepStatus();
+    this.saveState();
+    this.stepsSubject.next([...this.steps]);
+  }
+
   postponeStep(): void {
     const currentTrackStep = this.getCurrentTrackingStep();
     if (!currentTrackStep || !currentTrackStep.canPostpone) {
