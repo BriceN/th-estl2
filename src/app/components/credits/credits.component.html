@@ -1,46 +1,173 @@
 <div class="credits-container">
-    <div class="credits-content">
-        <h1 class="credits-title">Félicitations</h1>
+    <!-- Stars background effect -->
+    <div class="stars-container">
+        <div class="star"
+             *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+    </div>
 
-        <div class="credits-section">
-            <h2>Vous avez terminé votre pèlerinage temporel</h2>
-            <p class="credits-description">
-                Merci d'avoir suivi ce voyage à travers le temps et l'espace.
-                Chaque étape était un reflet de moments précieux gravés dans l'histoire.
-            </p>
+    <!-- Floating particles -->
+    <div class="particles-container">
+        <div class="particle"
+             *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"></div>
+    </div>
+
+    <div #creditsContent
+         class="credits-content">
+        <!-- Intro Section -->
+        <div class="intro-section">
+            <div class="intro-decoration top"></div>
+            <div class="intro-decoration bottom"></div>
+
+            <h1 class="credits-title">Félicitations</h1>
+            <div class="credits-subtitle">Tu as terminé ton pèlerinage temporel</div>
+
+
         </div>
 
-        <div class="credits-section">
-            <h2>Crédits</h2>
-            <div class="credits-list">
-                <div class="credit-item">
-                    <span class="credit-role">Concept & Développement</span>
-                    <span class="credit-name">Équipe de développement</span>
+        <!-- Journey Summary -->
+        <div class="journey-summary">
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <span class="material-icon">🏆</span>
+                    </div>
+                    <div class="stat-value">{{ steps.length }}</div>
+                    <div class="stat-label">Étapes</div>
                 </div>
-                <div class="credit-item">
-                    <span class="credit-role">Design UI/UX</span>
-                    <span class="credit-name">Designers créatifs</span>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <span class="material-icon">⏳</span>
+                    </div>
+                    <div class="stat-value">{{ getTotalJourneyYears() }}</div>
+                    <div class="stat-label">Années</div>
                 </div>
-                <div class="credit-item">
-                    <span class="credit-role">Contenu & Narration</span>
-                    <span class="credit-name">Équipe éditoriale</span>
-                </div>
-                <div class="credit-item">
-                    <span class="credit-role">Effets sonores</span>
-                    <span class="credit-name">Bibliothèque audio</span>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <span class="material-icon">👣</span>
+                    </div>
+                    <div class="stat-value">{{ getJourneyDuration() }}</div>
+                    <div class="stat-label">De marche</div>
                 </div>
             </div>
         </div>
 
-        <div class="credits-section">
-            <p class="final-message">
-                "Le temps n'est qu'une illusion. Ce qui compte, ce sont les souvenirs que nous créons."
-            </p>
+
+
+        <!-- Timeline Journey -->
+        <div class="journey-timeline">
+            <h2 class="section-title">Ton Voyage à Travers le Temps</h2>
+
+            <div class="timeline">
+                <div *ngFor="let step of steps; let i = index"
+                     class="timeline-item"
+                     [class.even]="i % 2 === 0"
+                     [class.odd]="i % 2 !== 0">
+
+                    <div class="timeline-year">
+                        <div class="year-text">{{ step.year }}</div>
+                        <div class="year-glow"></div>
+                    </div>
+
+                    <div class="timeline-content"
+                         [attr.data-year]="step.year">
+                        <h3 class="timeline-title">{{ step.title }}</h3>
+
+                        <div class="timeline-image-container"
+                             *ngIf="step.unlockedImage">
+                            <img [src]="'/images/unlocked/'+step.unlockedImage"
+                                 [alt]="step.title"
+                                 class="timeline-image" />
+                            <div class="image-overlay"></div>
+                        </div>
+
+                        <p class="timeline-description">{{ step.unlockedContent }}</p>
+
+                        <!-- Decorative elements -->
+                        <div class="corner-accent top-left"></div>
+                        <div class="corner-accent top-right"></div>
+                        <div class="corner-accent bottom-left"></div>
+                        <div class="corner-accent bottom-right"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Dedication Section -->
+        <div class="dedication-section">
+            <div class="section-decoration"></div>
+            <h2 class="section-title">Créé avec amour pour</h2>
+            <div class="dedication">
+                <p class="special-name">Estelle</p>
+                <p class="dedication-subtitle">Pour ton 30ème anniversaire</p>
+                <div class="year-chip">2025</div>
+            </div>
+            <div class="heart-decoration"></div>
+        </div>
+
+        <!-- Quotes Section -->
+        <div class="quotes-section">
+            <div class="quote-container">
+                <div class="quote-decoration left"></div>
+                <p class="quote">"Fais que chaque heure de ta vie sois belle. Le moindre geste est un souvenir futur."
+                </p>
+                <div class="quote-decoration right"></div>
+            </div>
+        </div>
+
+        <!-- Credits Section -->
         <div class="credits-section">
+            <h2 class="section-title">Crédits</h2>
+            <div class="credits-list">
+                <div class="credit-item">
+                    <span class="credit-role">Concept & Développement</span>
+                    <span class="credit-name">Brice Nuzzo</span>
+                </div>
+                <div class="credit-item">
+                    <span class="credit-role">Design UI/UX</span>
+                    <span class="credit-name">Brice Nuzzo</span>
+                </div>
+                <div class="credit-item">
+                    <span class="credit-role">Contenu & Narration</span>
+                    <span class="credit-name">Brice Nuzzo et un peu l'IA j'avoue</span>
+                </div>
+                <div class="credit-item">
+                    <span class="credit-role">Voix narrative</span>
+                    <span class="credit-name">Estelle</span>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- Special Thanks -->
+        <div class="special-thanks">
+            <h2 class="section-title">Remerciements spéciaux</h2>
+            <p class="thanks-text">
+                À tous ceux qui ont fait partie de ce voyage depuis le début...
+                <br>Les rencontres, les lieux, les histoires qui ont façonné ce parcours.
+            </p>
+
+            <div class="thanks-names">
+                <div class="thanks-column">
+                    <div class="thanks-name">Bridge & Valou</div>
+                    <div class="thanks-name">Marie-Odile</div>
+                    <div class="thanks-name">Constance et Domi</div>
+                    <div class="thanks-name">Julie et Juliette</div>
+                    <div class="thanks-name">Mirabelle</div>
+                    <div class="thanks-name">Olivier</div>
+                    <div class="thanks-name">et tous les autres rencontrés le long du chemin...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Message -->
+        <div class="final-message">
+            <div class="final-decoration"></div>
             <p class="thank-you">
-                Merci de votre participation à cette aventure unique.
+                Merci d'avoir partagé cette aventure à travers le temps.
+                <br>
+                <span class="signature">Je t'aime ❤️</span>
             </p>
         </div>
     </div>

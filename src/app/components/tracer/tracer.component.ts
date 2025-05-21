@@ -73,6 +73,7 @@ export class TracerComponent implements OnInit, OnDestroy {
             // TreasureHuntService.unlockCurrentStep already called onStepOpen for this step.
             this.router.navigate(['/carte']);
             this.audioManagerService.play('found.wav');
+            navigator.vibrate(1000);
             // No need to update wasStepBeingTracedUnlocked here as we are navigating away.
           } else {
             // Update unlock status for next check if not redirected
