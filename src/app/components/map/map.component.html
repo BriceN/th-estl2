@@ -78,7 +78,7 @@
                                  *ngIf="step.lockedImage">
                                 <div class="hologram-frame">
                                     <div class="hologram-scan-line"></div>
-                                    <img [src]="step.lockedImage"
+                                    <img [src]="'/images/locked/'+step.lockedImage"
                                          alt="Image d'indice"
                                          loading="lazy">
                                     <div class="hologram-glow"></div>
@@ -88,7 +88,7 @@
                             <div class="media-container"
                                  *ngIf="step.lockedVideo">
                                 <div class="video-frame">
-                                    <video [src]="step.lockedVideo"
+                                    <video [src]="'/images/locked/'+step.lockedVideo"
                                            controls
                                            preload="none"></video>
                                     <div class="video-decorations">
@@ -125,7 +125,7 @@
                             <div class="media-container celebration"
                                  *ngIf="step.unlockedImage">
                                 <div class="image-frame">
-                                    <img [src]="step.unlockedImage"
+                                    <img [src]="'/images/unlocked/'+step.unlockedImage"
                                          alt="Image du contenu débloqué"
                                          loading="lazy">
                                     <div class="sparkle top-left"></div>
@@ -135,15 +135,10 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="step.cassette">
-                                <app-cassette-player [showBadge]="true"
-                                                     [cassetteFile]="step.cassette"></app-cassette-player>
-                            </div>
-
                             <div class="media-container"
                                  *ngIf="step.unlockedVideo">
                                 <div class="video-frame unlocked">
-                                    <video [src]="step.unlockedVideo"
+                                    <video [src]="'/images/unlocked/'+step.unlockedVideo"
                                            controls
                                            preload="none"></video>
                                     <div class="video-decorations">
@@ -154,6 +149,13 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div *ngIf="step.cassette">
+                                <app-cassette-player [showBadge]="true"
+                                                     [cassetteFile]="step.cassette"></app-cassette-player>
+                            </div>
+
+
 
                             <!-- Bouton d'étape suivante -->
                             <div class="next-step-button"

@@ -219,7 +219,7 @@
   }
 
   &.current {
-    border-left: 4px solid var(--accent-purple);
+    border-left: 6px solid var(--accent-purple);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(214, 68, 255, 0.3);
     transform: translateZ(10px) scale(1.02);
     z-index: 10;
@@ -227,6 +227,7 @@
     &::after {
       content: "";
       position: absolute;
+      display: none;
       top: 0;
       left: 0;
       width: 4px;
@@ -243,6 +244,7 @@
 
     &::after {
       content: "";
+      display: none;
       position: absolute;
       top: 0;
       left: 0;

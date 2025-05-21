@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  OnInit,
   Output,
 } from '@angular/core';
 import { CassettePlayerComponent } from '../cassette-player/cassette-player.component';
+import { AudioManagerService } from '../../services/audio-manager.service';
 
 @Component({
   selector: 'app-final-cassette',
@@ -13,7 +15,12 @@ import { CassettePlayerComponent } from '../cassette-player/cassette-player.comp
   styleUrl: './final-cassette.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FinalCassetteComponent {
+export class FinalCassetteComponent implements OnInit {
+  constructor(private audioManagerService: AudioManagerService) {}
+
+  ngOnInit(): void {
+    this.audioManagerService.play('found.wav', false, false, 0, 0.5);
+  }
   @Output() cassetteEnded = new EventEmitter<void>();
 
   onFinalCassetteEnded(): void {

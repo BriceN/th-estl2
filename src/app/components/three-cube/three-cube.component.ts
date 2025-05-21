@@ -507,6 +507,8 @@ export class ThreeCubeComponent implements AfterViewInit, OnDestroy {
     // Create explosion effect
     this.createExplosionEffect();
 
+    this.audioManagerService.play('boom.wav');
+
     // Start cube propulsion
     this.startCubePropulsion();
 

@@ -12,6 +12,6 @@ export class CreditsComponent implements OnInit {
   constructor(private audioManagerService: AudioManagerService) {}
   ngOnInit(): void {
     this.audioManagerService.stopAll();
-    this.audioManagerService.play('OuterWilds.mp3', true, true, 1000, 0.5);
+    this.audioManagerService.play('OuterWilds.mp3', false, true, 1000, 0.5);
   }
 }
