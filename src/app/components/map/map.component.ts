@@ -87,6 +87,7 @@ import { FinalStepComponent } from '../final-step/final-step.component';
 export class MapComponent implements OnInit, OnDestroy {
   steps: Step[] = [];
   private subscription: Subscription | null = null;
+  private revealedImages: Set<number> = new Set<number>();
 
   // Track which steps should render content for performance
   visibleSteps = new Set<number>();
@@ -194,5 +195,18 @@ export class MapComponent implements OnInit, OnDestroy {
   // TrackBy function for ngFor performance
   trackStepById(index: number, step: Step): number {
     return step.id;
+  }
+
+  isImageBlurred(stepId: number): boolean {
+    return !this.revealedImages.has(stepId);
+  }
+
+  toggleImageBlur(stepId: number): void {
+    if (this.revealedImages.has(stepId)) {
+      this.revealedImages.delete(stepId);
+    } else {
+      this.revealedImages.add(stepId);
+      this.audioManagerService.play('click.wav', false, false, 0, 0.6);
+    }
   }
 }

@@ -76,12 +76,18 @@
 
                             <div class="media-container hologram"
                                  *ngIf="step.lockedImage">
-                                <div class="hologram-frame">
+                                <div class="hologram-frame"
+                                     [class.blurred]="isImageBlurred(step.id)"
+                                     (click)="toggleImageBlur(step.id)">
                                     <div class="hologram-scan-line"></div>
                                     <img [src]="'/images/locked/'+step.lockedImage"
                                          alt="Image d'indice"
                                          loading="lazy">
                                     <div class="hologram-glow"></div>
+                                    <div class="reveal-overlay"
+                                         *ngIf="isImageBlurred(step.id)">
+                                        <span class="reveal-text">Dévoiler</span>
+                                    </div>
                                 </div>
                             </div>
 

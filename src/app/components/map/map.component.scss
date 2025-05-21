@@ -539,6 +539,39 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
         0 0 20px rgba(0, 217, 255, 0.3);
 
+      &.blurred img {
+        filter: blur(10px) brightness(0.7) grayscale(0.5) hue-rotate(20deg);
+      }
+
+      .reveal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 15;
+
+        .reveal-text {
+          padding: 8px 20px;
+          background: rgba(0, 217, 255, 0.2);
+          border: 1px solid rgba(0, 217, 255, 0.4);
+          border-radius: 20px;
+          color: var(--text-secondary);
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-size: 14px;
+          text-shadow: 0 0 5px rgba(0, 217, 255, 0.7);
+          box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+          backdrop-filter: blur(3px);
+          transition: all 0.3s ease;
+        }
+      }
+
       img {
         display: block;
         width: 100%;
