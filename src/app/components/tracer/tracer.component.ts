@@ -72,6 +72,7 @@ export class TracerComponent implements OnInit, OnDestroy {
             // The step we were tracing was just unlocked!
             // TreasureHuntService.unlockCurrentStep already called onStepOpen for this step.
             this.router.navigate(['/carte']);
+            this.audioManagerService.play('found.wav');
             // No need to update wasStepBeingTracedUnlocked here as we are navigating away.
           } else {
             // Update unlock status for next check if not redirected
@@ -171,10 +172,9 @@ export class TracerComponent implements OnInit, OnDestroy {
     const angle = (progress / 100) * 360;
 
     return `conic-gradient(
-      from 0deg,
-      rgba(0, 217, 255, 0.3) ${angle}deg,
-      transparent ${angle}deg
-    )`;
+    rgba(0, 217, 255, 0.3) 0deg ${angle}deg, 
+    transparent ${angle}deg 360deg
+  )`;
   }
 
   getDistanceProgress(): number {
