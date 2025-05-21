@@ -58,11 +58,12 @@ export class IntroModalComponent implements OnInit {
       this.showSecondLayer = true;
       this.isAnimating = false;
       navigator.vibrate(2000);
+      this.audioManagerService.play('pool_enter.wav', false, false, 0, 0.5);
     }, 9000);
   }
 
   closeModal() {
-    this.audioManagerService.play('click.wav', false, false, 0, 0.2);
+    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
     this.showModal = false;
     // Save that user has seen the intro
     localStorage.setItem(this.STORAGE_KEY, 'true');

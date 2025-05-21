@@ -63,7 +63,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     // Navigate to home page
-    this.audioManagerService.play('click.wav', false, false, 0, 0.2);
+    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
     this.router.navigate(['/']);
   }
 

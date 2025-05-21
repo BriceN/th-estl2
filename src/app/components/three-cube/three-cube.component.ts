@@ -60,6 +60,7 @@ export class ThreeCubeComponent implements AfterViewInit, OnDestroy {
     this.addEventListeners();
     this.animate();
     this.audioManagerService.stopAll();
+    this.audioManagerService.play('pool_enter.wav', false, false, 0, 0.5);
     this.audioManagerService.play('EndTimes.mp3', true, true, 1000, 0.2);
   }
 

@@ -85,7 +85,7 @@ export class FinalStepComponent implements OnInit, OnDestroy {
   }
 
   finishPilgrimage(): void {
-    this.audioManagerService.play('click.wav', false, false, 0, 0.2);
+    this.audioManagerService.play('click.wav', false, false, 0, 0.6);
     // Open the ending modal instead of showing an alert
     this.treasureHuntService.openEndingModal();
   }
