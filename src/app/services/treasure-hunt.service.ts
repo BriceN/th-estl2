@@ -635,6 +635,10 @@ export class TreasureHuntService {
     this.stepsSubject.next([...this.steps]);
   }
 
+  getStepsSnapshot(): Step[] {
+    return [...this.steps];
+  }
+
   postponeStep(): void {
     const currentTrackStep = this.getCurrentTrackingStep();
     if (!currentTrackStep || !currentTrackStep.canPostpone) {

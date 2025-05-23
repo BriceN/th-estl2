@@ -198,4 +198,23 @@ export class PhotoStorageService {
       request.onerror = () => reject(request.error);
     });
   }
+
+  async getAllPhotos(): Promise<Map<number, PhotoMemory>> {
+    if (!this.db) return new Map();
+
+    const transaction = this.db.transaction(['photos'], 'readonly');
+    const store = transaction.objectStore('photos');
+
+    return new Promise((resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => {
+        const photos = new Map<number, PhotoMemory>();
+        request.result.forEach((photo: PhotoMemory) => {
+          photos.set(photo.stepId, photo);
+        });
+        resolve(photos);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
 }

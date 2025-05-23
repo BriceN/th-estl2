@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
 import { Subscription, interval } from 'rxjs';
+import { PhotoStorageService } from '../../services/photo-storage.service';
+import { PhotoExportService } from '../../services/photo-export.service';
 
 @Component({
   selector: 'app-debug-panel',
@@ -24,6 +26,7 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   completedSteps: number = 0;
   totalSteps: number = 0;
   progressPercentage: number = 0;
+  hasPhotos: boolean = false;
 
   debugMode = false;
   private debugModeSubscription: Subscription | null = null;
@@ -31,10 +34,21 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   private distanceSubscription: Subscription | null = null;
   private stepsSubscription: Subscription | null = null;
   private timeUpdateSubscription: Subscription | null = null;
+  private photosSubscription: Subscription | null = null;
 
-  constructor(private treasureHuntService: TreasureHuntService) {}
+  constructor(
+    private treasureHuntService: TreasureHuntService,
+    private photoStorage: PhotoStorageService,
+    private photoExport: PhotoExportService
+  ) {}
 
   ngOnInit(): void {
+    this.photosSubscription = this.photoStorage
+      .getPhotosObservable()
+      .subscribe((photos) => {
+        this.hasPhotos = photos.size > 0;
+      });
+
     this.debugModeSubscription = this.treasureHuntService
       .getDebugModeObservable()
       .subscribe((isDebugMode: boolean) => {
@@ -80,6 +94,7 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
     this.distanceSubscription?.unsubscribe();
     this.stepsSubscription?.unsubscribe();
     this.timeUpdateSubscription?.unsubscribe();
+    this.photosSubscription?.unsubscribe();
   }
 
   private updateTimeData(): void {
@@ -169,6 +184,29 @@ export class DebugPanelComponent implements OnInit, OnDestroy {
   postponeCurrentStep(): void {
     if (this.canCurrentStepBePostponed()) {
       this.treasureHuntService.postponeStep();
+    }
+  }
+
+  async exportPhotos(): Promise<void> {
+    try {
+      const photos = await this.photoStorage.getAllPhotos();
+      const steps = await this.treasureHuntService.getStepsSnapshot(); // Add this method
+
+      if (photos.size === 0) {
+        alert('Aucune photo à exporter');
+        return;
+      }
+
+      await this.photoExport.exportAsZip(photos, steps);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert("Erreur lors de l'export des photos");
+    }
+  }
+
+  async clearPhotos(): Promise<void> {
+    if (confirm('Êtes-vous sûr de vouloir supprimer toutes les photos ?')) {
+      await this.photoStorage.clearAllPhotos();
     }
   }
 }

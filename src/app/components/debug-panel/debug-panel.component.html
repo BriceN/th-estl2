@@ -102,6 +102,29 @@
         </div>
     </div>
 
+    <div class="debug-section photos-section"
+         *ngIf="debugMode">
+        <h4>Gestion des Photos</h4>
+        <div class="photos-info">
+            <div class="info-row">
+                <span class="label">Photos sauvegardées :</span>
+                <span class="value">{{ hasPhotos ? 'Oui' : 'Non' }}</span>
+            </div>
+        </div>
+        <div class="debug-actions">
+            <button class="button info"
+                    (click)="exportPhotos()"
+                    [disabled]="!hasPhotos">
+                <span>📥</span> Exporter les photos
+            </button>
+            <button class="button warning"
+                    (click)="clearPhotos()"
+                    [disabled]="!hasPhotos">
+                <span>🗑️</span> Effacer toutes les photos
+            </button>
+        </div>
+    </div>
+
     <!-- Actions Section -->
     <div class="debug-section actions-section">
         <h4>Actions</h4>
