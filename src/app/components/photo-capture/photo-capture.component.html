@@ -1,0 +1,69 @@
+<div class="photo-capture-container">
+    <!-- Camera button when no photo -->
+    <div class="capture-section"
+         *ngIf="!photoUrl && !showCamera">
+        <button class="capture-button"
+                (click)="startCamera()">
+            <div class="button-icon">📸</div>
+            <div class="button-text">Capturer un souvenir</div>
+            <div class="button-glow"></div>
+        </button>
+    </div>
+
+    <!-- Camera view -->
+    <div class="camera-view"
+         *ngIf="showCamera">
+        <video #videoElement
+               class="camera-feed"
+               autoplay
+               playsinline></video>
+
+        <div class="camera-overlay">
+            <div class="viewfinder">
+                <div class="corner top-left"></div>
+                <div class="corner top-right"></div>
+                <div class="corner bottom-left"></div>
+                <div class="corner bottom-right"></div>
+            </div>
+        </div>
+
+        <div class="camera-controls">
+            <button class="control-button cancel"
+                    (click)="cancelCamera()">
+                <span>✕</span>
+            </button>
+            <button class="control-button capture"
+                    (click)="capturePhoto()">
+                <div class="capture-icon"></div>
+            </button>
+            <button class="control-button switch"
+                    (click)="switchCamera()"
+                    *ngIf="hasMultipleCameras">
+                <span>🔄</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="photo-preview"
+         *ngIf="photoUrl && !showCamera">
+        <div class="photo-frame">
+            <img [src]="photoUrl"
+                 alt="Souvenir capturé"
+                 class="captured-photo" />
+            <div class="photo-overlay"></div>
+            <div class="photo-timestamp">{{ captureDate | date: 'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+
+        <!-- <div class="preview-actions">
+            <button class="action-button"
+                    (click)="retakePhoto()">
+                <span>🔄</span> Reprendre
+            </button>
+        </div> -->
+    </div>
+
+    <!-- Hidden canvas for photo capture -->
+    <canvas #canvas
+            class="hidden-canvas"></canvas>
+</div>

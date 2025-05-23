@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  perspective: 1000px;
+  // perspective: 1000px;
 }
 
 .holo-panel {
@@ -187,6 +187,18 @@
   padding: 10px 3px;
 }
 
+.hr {
+  margin: 50px 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 217, 255, 0.1),
+    rgba(0, 217, 255, 0.5),
+    rgba(0, 217, 255, 0.1)
+  );
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+}
+
 .timeline-item {
   background: linear-gradient(
     to right,
@@ -200,7 +212,7 @@
   transition: all 0.4s ease, transform 0.2s ease;
   border: 1px solid rgba(0, 217, 255, 0.2);
   position: relative;
-  transform-style: preserve-3d;
+  //transform-style: preserve-3d;
 
   &::before {
     content: "";
@@ -221,7 +233,7 @@
   &.current {
     border-left: 6px solid var(--accent-purple);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(214, 68, 255, 0.3);
-    transform: translateZ(10px) scale(1.02);
+    //transform: translateZ(10px) scale(1.02);
     z-index: 10;
 
     &::after {
@@ -263,7 +275,7 @@
 
   &:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 217, 255, 0.3);
-    transform: translateZ(5px) scale(1.01);
+    //transform: translateZ(5px) scale(1.01);
   }
 }
 
@@ -527,7 +539,7 @@
 
   &.hologram {
     position: relative;
-    perspective: 1000px;
+    // perspective: 1000px;
 
     .hologram-frame {
       position: relative;
@@ -936,7 +948,7 @@
 .next-step-button {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-top: 50px;
 
   .button {
     display: flex;

@@ -49,7 +49,7 @@ export class FinalStepComponent implements OnInit, OnDestroy {
   private updateRemainingTime(): void {
     const now = new Date();
     const midnight = new Date();
-    midnight.setHours(10, 0, 0, 0); // Set to midnight tonight
+    midnight.setHours(13, 28, 0, 0); // Set to midnight tonight
 
     // Calculate time until midnight
     let timeRemaining = midnight.getTime() - now.getTime();

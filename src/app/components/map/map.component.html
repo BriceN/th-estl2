@@ -156,6 +156,12 @@
                                 </div>
                             </div>
 
+                            <!-- Add Photo Capture Component -->
+                            <app-photo-capture [stepId]="step.id">
+                            </app-photo-capture>
+
+                            <div class="hr"></div>
+
                             <div *ngIf="step.cassette">
                                 <app-cassette-player [showBadge]="true"
                                                      [cassetteFile]="step.cassette"></app-cassette-player>

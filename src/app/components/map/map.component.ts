@@ -17,6 +17,7 @@ import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { StepIndicatorComponent } from '../step-indicator/step-indicator.component';
 import { AudioManagerService } from '../../services/audio-manager.service';
 import { FinalStepComponent } from '../final-step/final-step.component';
+import { PhotoCaptureComponent } from '../photo-capture/photo-capture.component';
 
 @Component({
   selector: 'app-map',
@@ -26,6 +27,7 @@ import { FinalStepComponent } from '../final-step/final-step.component';
     StepIndicatorComponent,
     CassettePlayerComponent,
     FinalStepComponent,
+    PhotoCaptureComponent,
   ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
