@@ -11,6 +11,7 @@ import { AudioManagerService } from '../../services/audio-manager.service';
 import { TreasureHuntService } from '../../services/treasure-hunt.service';
 import { Step } from '../../models/step.model';
 import { Subject, takeUntil } from 'rxjs';
+import { PhotoStorageService } from '../../services/photo-storage.service';
 
 @Component({
   selector: 'app-credits',
@@ -25,12 +26,15 @@ export class CreditsComponent implements OnInit, AfterViewInit, OnDestroy {
   steps: Step[] = [];
   journeyYears: number[] = [];
   Math = Math; // Expose Math to the template
+  stepPhotos: Map<number, string> = new Map();
+
   private destroy$ = new Subject<void>();
   private readonly CREDITS_DURATION_MS = 146000; // 2 min 26 seconds
 
   constructor(
     private audioManagerService: AudioManagerService,
-    private treasureHuntService: TreasureHuntService
+    private treasureHuntService: TreasureHuntService,
+    private photoStorage: PhotoStorageService
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +54,22 @@ export class CreditsComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Extract unique years for the journey summary
         this.journeyYears = [...new Set(this.steps.map((step) => step.year))];
+      });
+
+    // Load all photos
+    this.photoStorage
+      .getPhotosObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((photos) => {
+        // Clean up old URLs
+        this.stepPhotos.forEach((url) => URL.revokeObjectURL(url));
+
+        // Create new URLs
+        this.stepPhotos.clear();
+        photos.forEach((photo, stepId) => {
+          const url = URL.createObjectURL(photo.photoBlob);
+          this.stepPhotos.set(stepId, url);
+        });
       });
   }
 
@@ -77,6 +97,7 @@ export class CreditsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Restore music when component is destroyed
     this.audioManagerService.stopAll();
     this.audioManagerService.play('space.ogg', true, true, 1000, 0.05);
+    this.stepPhotos.forEach((url) => URL.revokeObjectURL(url));
   }
 
   private startAutoScroll(scrollSpeed: number): void {

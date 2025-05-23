@@ -1,11 +1,9 @@
 <div class="credits-container">
-    <!-- Stars background effect -->
     <div class="stars-container">
         <div class="star"
              *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
     </div>
 
-    <!-- Floating particles -->
     <div class="particles-container">
         <div class="particle"
              *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"></div>
@@ -13,7 +11,6 @@
 
     <div #creditsContent
          class="credits-content">
-        <!-- Intro Section -->
         <div class="intro-section">
             <div class="intro-decoration top"></div>
             <div class="intro-decoration bottom"></div>
@@ -24,7 +21,6 @@
 
         </div>
 
-        <!-- Journey Summary -->
         <div class="journey-summary">
             <div class="summary-stats">
                 <div class="stat-item">
@@ -53,7 +49,6 @@
 
 
 
-        <!-- Timeline Journey -->
         <div class="journey-timeline">
             <h2 class="section-title">Ton Voyage à Travers le Temps</h2>
 
@@ -73,16 +68,32 @@
                         <h3 class="timeline-title">{{ step.title }}</h3>
 
                         <div class="timeline-image-container"
-                             *ngIf="step.unlockedImage">
-                            <img [src]="'/images/unlocked/'+step.unlockedImage"
+                             *ngIf="stepPhotos.get(step.id)">
+                            <img [src]="stepPhotos.get(step.id)"
                                  [alt]="step.title"
-                                 class="timeline-image" />
+                                 class="timeline-image background-image" />
+
+                            <div class="postcard-photo"
+                                 *ngIf="step.unlockedImage">
+                                <div class="postcard-frame">
+                                    <img [src]="'/images/unlocked/'+step.unlockedImage"
+                                         [alt]="'Carte postale - ' + step.title"
+                                         class="user-photo" />
+                                    <div class="postcard-tape top-left"></div>
+                                    <div class="postcard-tape top-right"></div>
+                                    <div class="postcard-tape bottom-left"></div>
+                                    <div class="postcard-tape bottom-right"></div>
+                                </div>
+                                <!-- <div class="postcard-caption">
+                                    <span class="caption-icon">📸</span>
+                                    <span class="caption-text">Mon souvenir</span>
+                                </div> -->
+                            </div>
+
                             <div class="image-overlay"></div>
                         </div>
-
                         <p class="timeline-description">{{ step.unlockedContent }}</p>
 
-                        <!-- Decorative elements -->
                         <div class="corner-accent top-left"></div>
                         <div class="corner-accent top-right"></div>
                         <div class="corner-accent bottom-left"></div>
@@ -92,7 +103,6 @@
             </div>
         </div>
 
-        <!-- Dedication Section -->
         <div class="dedication-section">
             <div class="section-decoration"></div>
             <h2 class="section-title">Créé avec amour pour</h2>
@@ -104,7 +114,6 @@
             <div class="heart-decoration"></div>
         </div>
 
-        <!-- Quotes Section -->
         <div class="quotes-section">
             <div class="quote-container">
                 <div class="quote-decoration left"></div>
@@ -114,7 +123,6 @@
             </div>
         </div>
 
-        <!-- Credits Section -->
         <div class="credits-section">
             <h2 class="section-title">Crédits</h2>
             <div class="credits-list">
@@ -140,7 +148,6 @@
 
 
 
-        <!-- Special Thanks -->
         <div class="special-thanks">
             <h2 class="section-title">Remerciements spéciaux</h2>
             <p class="thanks-text">
@@ -161,7 +168,6 @@
             </div>
         </div>
 
-        <!-- Final Message -->
         <div class="final-message">
             <div class="final-decoration"></div>
             <p class="thank-you">
